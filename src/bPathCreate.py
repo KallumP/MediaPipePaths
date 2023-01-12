@@ -4,10 +4,10 @@ import time
 import json
 
 
-def WithinTarget(index, width, height):
+def WithinTarget(index, xPoint, yPoint, json):
 
-    filePath = "gesture.json"
-    with open(filePath, 'r') as f:
+    filePath = "points.json"
+    with open(filePath, 'w') as f:
         pointJson = json.load(f)
 
         toTrack = pointJson[index].get("toTrack")
@@ -24,6 +24,15 @@ def WithinTarget(index, width, height):
         distance = (xDistance2 + yDistance2) ** 0.5
 
         return distance < leniency
+
+        testLinks.append({
+            "testFile": testFile,
+            "testFileDate": str(testDate),
+            "testFileSize": testSize,
+            "testedFile": testedFile,
+            "testedFileDate": str(testedDate),
+            "testdFileSize": testedSize
+        })
 
 
 mp_holistic = mp.solutions.holistic
@@ -47,6 +56,11 @@ previousTime = 0
 currentTime = 0
 gestureIndex = 0
 
+indexToTrack = 0
+latestX = 0
+latestY = 0
+leniency = 100
+points = []
 
 while capture.isOpened():
 
@@ -74,18 +88,35 @@ while capture.isOpened():
 
     # calculates for the right hand
     if results.right_hand_landmarks:
-        if WithinTarget(gestureIndex, width, height):
-            gestureIndex += 1
+        latestX = results.right_hand_landmarks.landmark[indexToTrack].x * width
+        latestY = results.right_hand_landmarks.landmark[indexToTrack].y * height
 
-    cv2.putText(image, "Currently on: " + str(gestureIndex), (10, 70),
+    cv2.putText(image, "Points: " + str(len(points)), (10, 70),
                 cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow("Facial and Hand Landmarks", image)
 
-    # quit condition
-    if cv2.waitKey(5) & 0xFF == ord('q'):
+    key = cv2.waitKey(2)
+    if key == 27:  # esc key to quit
         break
 
-# When all the process is done
-# Release the capture and destroy all windows
+    # add point condition
+    elif key == 32:
+        points.append({
+            "toTrack": indexToTrack,
+            "x": latestX,
+            "y": latestY,
+            "leniency": leniency
+        })
+
+    # finish path condition
+    elif key == 13:
+        print("Finish button pressed")
+        if (points != []):
+            with open("gesture.json", "w") as f:
+                json.dump(points, f)
+            break
+        print("Empty array")
+        # When all the process is done
+        # Release the capture and destroy all windows
 capture.release()
 cv2.destroyAllWindows()
