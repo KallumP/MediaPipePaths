@@ -43,7 +43,6 @@ holistic_model = mp_holistic.Holistic(
     min_tracking_confidence=0.5
 )
 
-# Initializing the drawing utils for drawing the facial landmarks on image
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -63,6 +62,7 @@ while capture.isOpened():
     width = 1280
     height = 720
 
+    # processes this frame
     ret, frame = capture.read()
     frame = cv2.resize(frame, (width, height))
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -89,18 +89,22 @@ while capture.isOpened():
             gestureIndex += 1
             finished = gestureIndex >= len(points)
 
+    # progress message
     if (finished):
         cv2.putText(image, "Finished", (10, 70),
                     cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
     else:
         cv2.putText(image, "Currently on: " + str(gestureIndex), (10, 70),
                     cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
-    cv2.imshow("Facial and Hand Landmarks", image)
+
+    # output image
+    cv2.imshow("Hand path tracking", image)
+
     key = cv2.waitKey(2)
     if key == 27:  # esc key to quit
         break
 
-    if key == 114:
+    elif key == 114:  # r key to restart
         gestureIndex = 0
         finished = False
 

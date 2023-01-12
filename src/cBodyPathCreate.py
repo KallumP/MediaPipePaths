@@ -2,29 +2,28 @@ import cv2
 import mediapipe as mp
 import json
 
-
-mp_holistic = mp.solutions.holistic
-holistic_model = mp_holistic.Holistic(
+mp_pose = mp.solutions.pose
+pose_model = mp_pose.Pose(
     min_detection_confidence=0.5,
-    min_tracking_confidence=0.5
-)
+    min_tracking_confidence=0.5)
 
+# Initializing the drawing utils for drawing the facial landmarks on image
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
-mp_hands = mp.solutions.hands
 
 
 # (0) in VideoCapture is used to connect to your computer's default camera
 capture = cv2.VideoCapture(0)
 
 
-indexToTrack = 0
+indexToTrack = 16
 latestX = 0
 latestY = 0
-leniency = 100
+leniency = 0.1
 points = []
 
+# runs while the
 while capture.isOpened():
 
     width = 1280
@@ -35,33 +34,28 @@ while capture.isOpened():
     frame = cv2.resize(frame, (width, height))
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     image.flags.writeable = False
-    results = holistic_model.process(image)
+    results = pose_model.process(image)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    # draws the hands
+    # draws the body
     mp_drawing.draw_landmarks(
         image,
-        results.right_hand_landmarks,
-        mp_holistic.HAND_CONNECTIONS
-    )
-    mp_drawing.draw_landmarks(
-        image,
-        results.left_hand_landmarks,
-        mp_holistic.HAND_CONNECTIONS
-    )
+        results.pose_landmarks,
+        mp_pose.POSE_CONNECTIONS,
+        landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
     image = cv2.flip(image, 1)
 
-    # calculates for the right hand
-    if results.right_hand_landmarks:
-        latestX = results.right_hand_landmarks.landmark[indexToTrack].x * width
-        latestY = results.right_hand_landmarks.landmark[indexToTrack].y * height
+    # if there were results to process
+    if results.pose_landmarks:
+        latestX = results.pose_landmarks.landmark[indexToTrack].x
+        latestY = results.pose_landmarks.landmark[indexToTrack].y
 
     # progress message
     cv2.putText(image, "Points: " + str(len(points)), (10, 70),
                 cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
-    # output image
-    cv2.imshow("Hand path creating", image)
+    # outputs the message
+    cv2.imshow("Body path creating", image)
 
     key = cv2.waitKey(2)
     if key == 27:  # esc key to quit
@@ -78,9 +72,9 @@ while capture.isOpened():
     elif key == 13:  # enter to finish gesture
         print("Finish button pressed")
         if (points != []):
-            with open("zHandGesture.json", "w") as f:
+            with open("zBodyGesture.json", "w") as f:
                 toDump = {
-                    "Type": "hands",
+                    "Type": "body",
                     "Points": points
                 }
                 json.dump(toDump, f)
