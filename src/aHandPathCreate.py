@@ -3,37 +3,6 @@ import mediapipe as mp
 import json
 
 
-def WithinTarget(index, xPoint, yPoint, json):
-
-    filePath = "points.json"
-    with open(filePath, 'w') as f:
-        pointJson = json.load(f)
-
-        toTrack = pointJson[index].get("toTrack")
-        targetX = pointJson[index].get("x")
-        targetY = pointJson[index].get("y")
-        leniency = pointJson[index].get("leniency")
-
-        handX = results.right_hand_landmarks.landmark[toTrack].x * width
-        handY = results.right_hand_landmarks.landmark[toTrack].y * height
-
-        xDistance2 = (targetX - handX) ** 2
-        yDistance2 = (targetY - handY) ** 2
-
-        distance = (xDistance2 + yDistance2) ** 0.5
-
-        return distance < leniency
-
-        testLinks.append({
-            "testFile": testFile,
-            "testFileDate": str(testDate),
-            "testFileSize": testSize,
-            "testedFile": testedFile,
-            "testedFileDate": str(testedDate),
-            "testdFileSize": testedSize
-        })
-
-
 mp_holistic = mp.solutions.holistic
 holistic_model = mp_holistic.Holistic(
     min_detection_confidence=0.5,
@@ -48,7 +17,7 @@ mp_hands = mp.solutions.hands
 
 
 # (0) in VideoCapture is used to connect to your computer's default camera
-capture = cv2.VideoCapture(-1)
+capture = cv2.VideoCapture(0)
 
 
 indexToTrack = 0
@@ -63,6 +32,7 @@ while capture.isOpened():
     height = 720
 
     ret, frame = capture.read()
+    frame = cv2.resize(frame, (width, height))
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     image.flags.writeable = False
     results = holistic_model.process(image)
@@ -107,7 +77,7 @@ while capture.isOpened():
     elif key == 13:  # enter
         print("Finish button pressed")
         if (points != []):
-            with open("gesture.json", "w") as f:
+            with open("zHandGesture.json", "w") as f:
                 toDump = {
                     "Type": "hands",
                     "Points": points

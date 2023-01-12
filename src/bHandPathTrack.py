@@ -6,8 +6,6 @@ from termcolor import colored
 
 def WithinTarget(index, width, height, points):
 
-    points = pathJson.get("Points")
-	
     point = points[index]
     toTrack = point.get("toTrack")
     targetX = point.get("x")
@@ -26,15 +24,11 @@ def WithinTarget(index, width, height, points):
         return True
 
     return False
-	    
-	    
-	    
-	    
 
 
 # checks compatible tracking type
 requiredTracking = "hands"
-filePath = "gesture.json"
+filePath = "zHandGesture.json"
 with open(filePath, 'r') as f:
     pathJson = json.load(f)
 fileType = pathJson.get("Type")
@@ -59,6 +53,7 @@ mp_hands = mp.solutions.hands
 # (0) in VideoCapture is used to connect to your computer's default camera
 capture = cv2.VideoCapture(0)
 
+finished = False
 gestureIndex = 0
 points = pathJson.get("Points")
 
@@ -69,6 +64,7 @@ while capture.isOpened():
     height = 720
 
     ret, frame = capture.read()
+    frame = cv2.resize(frame, (width, height))
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     image.flags.writeable = False
     results = holistic_model.process(image)
@@ -88,22 +84,25 @@ while capture.isOpened():
     image = cv2.flip(image, 1)
 
     # calculates for the right hand
-    if results.right_hand_landmarks:
+    if results.right_hand_landmarks and not finished:
         if WithinTarget(gestureIndex, width, height, points):
             gestureIndex += 1
-            if(gestureIndex >= len(points)):
-                gestureIndex -= 1
-    
-    if (gestureIndex == len(points)-1):
-        cv2.putText(image, "Finished", (10,70),
-            cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
+            finished = gestureIndex >= len(points)
+
+    if (finished):
+        cv2.putText(image, "Finished", (10, 70),
+                    cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
     else:
-        cv2.putText(image,"Currently on: " + str(gestureIndex), (10,70),
-            cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
+        cv2.putText(image, "Currently on: " + str(gestureIndex), (10, 70),
+                    cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow("Facial and Hand Landmarks", image)
     key = cv2.waitKey(2)
     if key == 27:  # esc key to quit
         break
+
+    if key == 114:
+        gestureIndex = 0
+        finished = False
 
 capture.release()
 cv2.destroyAllWindows()
