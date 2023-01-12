@@ -48,7 +48,7 @@ mp_hands = mp.solutions.hands
 
 
 # (0) in VideoCapture is used to connect to your computer's default camera
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture(-1)
 
 
 indexToTrack = 0

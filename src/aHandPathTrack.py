@@ -7,7 +7,7 @@ from termcolor import colored
 def WithinTarget(index, width, height, points):
 
     points = pathJson.get("Points")
-
+	
     point = points[index]
     toTrack = point.get("toTrack")
     targetX = point.get("x")
@@ -26,6 +26,10 @@ def WithinTarget(index, width, height, points):
         return True
 
     return False
+	    
+	    
+	    
+	    
 
 
 # checks compatible tracking type
@@ -87,11 +91,16 @@ while capture.isOpened():
     if results.right_hand_landmarks:
         if WithinTarget(gestureIndex, width, height, points):
             gestureIndex += 1
-
-    cv2.putText(image, "Currently on: " + str(gestureIndex), (10, 70),
-                cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+            if(gestureIndex >= len(points)):
+                gestureIndex -= 1
+    
+    if (gestureIndex == len(points)-1):
+        cv2.putText(image, "Finished", (10,70),
+            cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
+    else:
+        cv2.putText(image,"Currently on: " + str(gestureIndex), (10,70),
+            cv2.FONT_HERSHEY_COMPLEX,1,(0,255,0),2)
     cv2.imshow("Facial and Hand Landmarks", image)
-
     key = cv2.waitKey(2)
     if key == 27:  # esc key to quit
         break
