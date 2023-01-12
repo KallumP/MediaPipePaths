@@ -1,0 +1,11 @@
+0.01
+following a path now works
+
+0.1
+creating a path now works
+
+0.1.1
+gesture compatibility checks
+
+0.1.2
+performance improvement (stops pulling the json for every frame)
