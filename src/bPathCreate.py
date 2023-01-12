@@ -1,6 +1,5 @@
 import cv2
 import mediapipe as mp
-import time
 import json
 
 
@@ -51,10 +50,6 @@ mp_hands = mp.solutions.hands
 # (0) in VideoCapture is used to connect to your computer's default camera
 capture = cv2.VideoCapture(0)
 
-# Initializing current time and precious time for calculating the FPS
-previousTime = 0
-currentTime = 0
-gestureIndex = 0
 
 indexToTrack = 0
 latestX = 0
@@ -100,7 +95,7 @@ while capture.isOpened():
         break
 
     # add point condition
-    elif key == 32:
+    elif key == 32:  # space
         points.append({
             "toTrack": indexToTrack,
             "x": latestX,
@@ -109,14 +104,17 @@ while capture.isOpened():
         })
 
     # finish path condition
-    elif key == 13:
+    elif key == 13:  # enter
         print("Finish button pressed")
         if (points != []):
             with open("gesture.json", "w") as f:
-                json.dump(points, f)
+                toDump = {
+                    "Type": "hands",
+                    "Points": points
+                }
+                json.dump(toDump, f)
             break
         print("Empty array")
-        # When all the process is done
-        # Release the capture and destroy all windows
+
 capture.release()
 cv2.destroyAllWindows()
