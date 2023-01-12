@@ -4,36 +4,32 @@ import json
 from termcolor import colored
 
 
-def WithinTarget(index, width, height):
+def WithinTarget(index, width, height, points):
 
-    filePath = "gesture.json"
-    with open(filePath, 'r') as f:
-        pathJson = json.load(f)
+    points = pathJson.get("Points")
 
-        points = pathJson.get("Points")
+    point = points[index]
+    toTrack = point.get("toTrack")
+    targetX = point.get("x")
+    targetY = point.get("y")
+    leniency = point.get("leniency")
 
-        point = points[index]
-        toTrack = point.get("toTrack")
-        targetX = point.get("x")
-        targetY = point.get("y")
-        leniency = point.get("leniency")
+    handX = results.right_hand_landmarks.landmark[toTrack].x * width
+    handY = results.right_hand_landmarks.landmark[toTrack].y * height
 
-        handX = results.right_hand_landmarks.landmark[toTrack].x * width
-        handY = results.right_hand_landmarks.landmark[toTrack].y * height
+    xDistance2 = (targetX - handX) ** 2
+    yDistance2 = (targetY - handY) ** 2
 
-        xDistance2 = (targetX - handX) ** 2
-        yDistance2 = (targetY - handY) ** 2
+    distance = (xDistance2 + yDistance2) ** 0.5
 
-        distance = (xDistance2 + yDistance2) ** 0.5
+    if distance < leniency:
+        return True
 
-        if distance < leniency:
-            return True
-
-        return False
+    return False
 
 
 # checks compatible tracking type
-requiredTracking = "hads"
+requiredTracking = "hands"
 filePath = "gesture.json"
 with open(filePath, 'r') as f:
     pathJson = json.load(f)
@@ -60,6 +56,7 @@ mp_hands = mp.solutions.hands
 capture = cv2.VideoCapture(0)
 
 gestureIndex = 0
+points = pathJson.get("Points")
 
 
 while capture.isOpened():
@@ -88,7 +85,7 @@ while capture.isOpened():
 
     # calculates for the right hand
     if results.right_hand_landmarks:
-        if WithinTarget(gestureIndex, width, height):
+        if WithinTarget(gestureIndex, width, height, points):
             gestureIndex += 1
 
     cv2.putText(image, "Currently on: " + str(gestureIndex), (10, 70),
