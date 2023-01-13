@@ -3,7 +3,9 @@ import mediapipe as mp
 import json
 from termcolor import colored
 import math
+import time
 
+gestureIndex = 0
 
 def GetDistance(start, end):
 
@@ -25,14 +27,14 @@ def GetAnglePoints(trackStart, trackMid, trackEnd):
 
 def GetAngleLengths(a, b, c):
 
-    # derivation
+    # derivation of cosine rule
     # c^2 = a^2+b^2 - 2ab Cos(C)
     # 0 = a^2+b^2 - c^2 - 2ab Cos(C)
     # 2ab Cos(C) = a^2+b^2 - c^2
     # Cos(C) = (a^2+b^2 - c^2) / 2ab
     # C = Cos-1( (a^2+b^2 - c^2) / 2ab)
 
-    C_rad = math.acos((a*a + b*b - c*c) / (2*a*b))
+    C_rad = math.acos((a**2 + b**2 - c**2) / (2*a*b))
     C_deg = math.degrees(C_rad)
     return C_deg
 
@@ -43,26 +45,46 @@ def WithinAngle(index, points):
     toTrack = point.get("toTrack")
     targetAngle = point.get("angle")
     leniency = point.get("leniency")
+    timeLimit = point.get("timeLimit")
+    
+    #checks how long since 
+    timeDifference = time.time() - prevGestureTime 
+    if (timeLimit == -1 or timeDifference <= timeLimit):
 
-    shoulder = [results.pose_landmarks.landmark[toTrack[0]].x,
+        #different points to track
+        start = [results.pose_landmarks.landmark[toTrack[0]].x,
                 results.pose_landmarks.landmark[toTrack[0]].y]
 
-    elbow = [results.pose_landmarks.landmark[toTrack[1]].x,
-             results.pose_landmarks.landmark[toTrack[1]].y]
+        mid = [results.pose_landmarks.landmark[toTrack[1]].x,
+                results.pose_landmarks.landmark[toTrack[1]].y]
 
-    wrist = [results.pose_landmarks.landmark[toTrack[2]].x,
-             results.pose_landmarks.landmark[toTrack[2]].y]
+        end = [results.pose_landmarks.landmark[toTrack[2]].x,
+                results.pose_landmarks.landmark[toTrack[2]].y]
 
-    elbowAngle = GetAnglePoints(shoulder, elbow, wrist)
-    # return elbowAngle
+        elbowAngle = GetAnglePoints(start, mid, end)
 
-    if elbowAngle > targetAngle - leniency and elbowAngle < targetAngle + leniency:
-        return True
+        #if the angle of the three points are that of the target
+        if elbowAngle > targetAngle - leniency and elbowAngle < targetAngle + leniency:
+            return True   
+    
+    #if the timelimit was set and the time taken is too long
+    if (timeLimit != -1 and timeDifference > timeLimit):
+        global gestureIndex
+        gestureIndex = 0
+        
+    elif (timeLimit != -1 and timeDifference < timeLimit):
+        
+        timeLeft = round(timeLimit - timeDifference, 2)
+        timeString = "Time left: " + str(timeLeft) + "s"
+        #outputs the time left
+        cv2.putText(image, timeString, (700, 70),
+                    cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+    return False      
 
 
 # checks compatible tracking type
 requiredTracking = "bodyAngles"
-filePath = "zBodyGestureAngle.json"
+filePath = "zPunchingGesture.json"
 with open(filePath, 'r') as f:
     pathJson = json.load(f)
 fileType = pathJson.get("Type")
@@ -85,19 +107,15 @@ mp_drawing_styles = mp.solutions.drawing_styles
 capture = cv2.VideoCapture(0)
 
 finished = False
-gestureIndex = 0
 points = pathJson.get("Points")
-
-
-trackStart = 16
-trackMid = 14
-trackEnd = 12
-lastAngle = -1
+prevGestureTime = time.time()
 
 while capture.isOpened():
 
     width = 1280
     height = 720
+    # width = 1920
+    # height = 1080
 
     # processes this frame
     ret, frame = capture.read()
@@ -121,6 +139,7 @@ while capture.isOpened():
         if WithinAngle(gestureIndex, points):
             gestureIndex += 1
             finished = gestureIndex >= len(points)
+            prevGestureTime = time.time()
 
     # progress message
     if (finished):

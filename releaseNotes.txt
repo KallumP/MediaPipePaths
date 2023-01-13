@@ -1,11 +1,26 @@
 0.01
-following a path now works
+following a path now works (hands)
 
 0.1
-creating a path now works
+creating a path now works (hands)
 
 0.1.1
-gesture compatibility checks
+gesture compatibility checks implemented
 
 0.1.2
 performance improvement (stops pulling the json for every frame)
+
+0.2
+following a path using body tracking now working
+
+0.2.1
+creating a path for body tracking now working
+
+0.2.2
+gestures no longer use pixel coordinates, but instead screenratios
+
+1
+Angle gesture working. 
+
+1.1
+Timed key frames

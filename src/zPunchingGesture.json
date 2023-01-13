@@ -1,0 +1,23 @@
+{
+	"Type": "bodyAngles",
+	"Points": [
+		{
+			"toTrack": [16, 14, 12],
+			"angle": 20,
+			"leniency": 20,
+			"timeLimit": -1
+		},
+		{
+			"toTrack": [16, 14, 12],
+			"angle": 150,
+			"leniency": 20,
+			"timeLimit": -1
+		},
+		{
+			"toTrack": [16, 14, 12],
+			"angle": 20,
+			"leniency": 20,
+			"timeLimit": 0.85
+		}
+	]
+}
