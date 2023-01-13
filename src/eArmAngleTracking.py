@@ -2,33 +2,67 @@ import cv2
 import mediapipe as mp
 import json
 from termcolor import colored
+import math
 
 
-def WithinTarget(index, points):
+def GetDistance(start, end):
+
+    xDistance2 = (start[0] - end[0]) ** 2
+    yDistance2 = (start[1] - end[1]) ** 2
+
+    distance = (xDistance2 + yDistance2) ** 0.5
+    return distance
+
+
+def GetAnglePoints(trackStart, trackMid, trackEnd):
+
+    aLength = GetDistance(trackStart, trackMid)
+    bLength = GetDistance(trackMid, trackEnd)
+    cLength = GetDistance(trackEnd, trackStart)
+
+    return GetAngleLengths(aLength, bLength, cLength)
+
+
+def GetAngleLengths(a, b, c):
+
+    # derivation
+    # c^2 = a^2+b^2 - 2ab Cos(C)
+    # 0 = a^2+b^2 - c^2 - 2ab Cos(C)
+    # 2ab Cos(C) = a^2+b^2 - c^2
+    # Cos(C) = (a^2+b^2 - c^2) / 2ab
+    # C = Cos-1( (a^2+b^2 - c^2) / 2ab)
+
+    C_rad = math.acos((a*a + b*b - c*c) / (2*a*b))
+    C_deg = math.degrees(C_rad)
+    return C_deg
+
+
+def WithinAngle(index, points):
 
     point = points[index]
     toTrack = point.get("toTrack")
-    targetX = point.get("x")
-    targetY = point.get("y")
+    targetAngle = point.get("angle")
     leniency = point.get("leniency")
 
-    handX = results.pose_landmarks.landmark[toTrack].x
-    handY = results.pose_landmarks.landmark[toTrack].y
+    shoulder = [results.pose_landmarks.landmark[toTrack[0]].x,
+                results.pose_landmarks.landmark[toTrack[0]].y]
 
-    xDistance2 = (targetX - handX) ** 2
-    yDistance2 = (targetY - handY) ** 2
+    elbow = [results.pose_landmarks.landmark[toTrack[1]].x,
+             results.pose_landmarks.landmark[toTrack[1]].y]
 
-    distance = (xDistance2 + yDistance2) ** 0.5
+    wrist = [results.pose_landmarks.landmark[toTrack[2]].x,
+             results.pose_landmarks.landmark[toTrack[2]].y]
 
-    if distance < leniency:
+    elbowAngle = GetAnglePoints(shoulder, elbow, wrist)
+    # return elbowAngle
+
+    if elbowAngle > targetAngle - leniency and elbowAngle < targetAngle + leniency:
         return True
-
-    return False
 
 
 # checks compatible tracking type
-requiredTracking = "body"
-filePath = "zBodyGesture.json"
+requiredTracking = "bodyAngles"
+filePath = "zBodyGestureAngle.json"
 with open(filePath, 'r') as f:
     pathJson = json.load(f)
 fileType = pathJson.get("Type")
@@ -54,6 +88,12 @@ finished = False
 gestureIndex = 0
 points = pathJson.get("Points")
 
+
+trackStart = 16
+trackMid = 14
+trackEnd = 12
+lastAngle = -1
+
 while capture.isOpened():
 
     width = 1280
@@ -78,8 +118,7 @@ while capture.isOpened():
     # if there were results to process
     if results.pose_landmarks and not finished:
 
-        # checks if the point to track was within the current path keyframe
-        if WithinTarget(gestureIndex, width, height, points):
+        if WithinAngle(gestureIndex, points):
             gestureIndex += 1
             finished = gestureIndex >= len(points)
 

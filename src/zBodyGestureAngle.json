@@ -1,0 +1,32 @@
+{
+    "Type": "bodyAngles",
+    "Points": [
+        {
+            "toTrack": [
+                16,
+                14,
+                12
+            ],
+            "angle": 20,
+            "leniency": 10
+        },
+        {
+            "toTrack": [
+                16,
+                14,
+                12
+            ],
+            "angle": 150,
+            "leniency": 10
+        },
+        {
+            "toTrack": [
+                16,
+                14,
+                12
+            ],
+            "angle": 20,
+            "leniency": 10
+        }
+    ]
+}
