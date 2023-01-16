@@ -81,14 +81,36 @@ def WithinAngle(index, keyframes):
         # outputs the time left
         cv2.putText(image, timeString, (700, 70),
                     cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+
     return False
 
 
+#checks if a user's index is within a target position
+def WithinTarget(index, keyframes):
+
+    #gets info from the json file
+    keyframe = keyframes[index]
+    toTrack = keyframe.get("toTrack")
+    leniency = keyframe.get("leniency")
+    targetPosition = [keyframe.get("target")[0], keyframe.get("target")[1]]
+    
+    #gets the point of the index to be tracked
+    indexPosition = [results.pose_landmarks.landmark[toTrack].x, results.pose_landmarks.landmark[toTrack].y]
+
+    distance = GetDistance(indexPosition, targetPosition)
+
+    if distance < leniency:
+        return True
+
+    return False
+
+# Deals with tracking the next keyframe of the gesture file
 def TrackKeyframe(index, keyframes):
 
     global gestureIndex
     global prevGestureTime
-    
+    global finished
+
     keyframe = keyframes[index]
     frameType = keyframe.get("keyframeType")
 
@@ -97,7 +119,15 @@ def TrackKeyframe(index, keyframes):
             gestureIndex += 1
             prevGestureTime = time.time()
 
-    global finished
+    elif (frameType == "body"):
+        if WithinTarget(gestureIndex, keyframes):
+            gestureIndex += 1
+            prevGestureTime = time.time()
+
+    else:
+        print(colored("Unsupported keyframe type, keyframe skipped", "red"))
+        gestureIndex += 1
+
     finished = gestureIndex >= len(keyframes)
 
 

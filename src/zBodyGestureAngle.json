@@ -32,6 +32,26 @@
             "angle": 20,
             "leniency": 10,
             "timeLimit": 0.8
+        },
+        {
+            "keyframeType": "body",
+            "toTrack":16,
+            "target": [
+                    0.8434030413627625,
+                    0.22684329748153687
+                ],
+            "leniency": 0.1,
+            "timeLimit": -1
+        },
+        {
+            "keyframeType": "ts",
+            "toTrack":16,
+            "target": [
+                    0.8434030413627625,
+                    0.22684329748153687
+                ],
+            "leniency": 0.1,
+            "timeLimit": -1
         }
     ]
 }
