@@ -19,8 +19,14 @@ creating a path for body tracking now working
 0.2.2
 gestures no longer use pixel coordinates, but instead screenratios
 
-1
+1 (13th Jan 2023)
 Angle gesture working. 
 
-1.1
+1.1 (13th Jan 2023)
 Timed key frames
+
+1.2 (16th Jan 2023)
+Different key frames allowed
+The gesture file no longer has a file type, but instead each keyframe has a keyframe type
+This allows each keyframe to be treated differently in code if needed
+The pushed example has three angle detections (right hand punch) and then a point detection (top left corner with the right hand)
