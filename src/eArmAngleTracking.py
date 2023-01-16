@@ -7,7 +7,7 @@ import time
 
 gestureIndex = 0
 
-
+# Returns the distance between two points
 def GetDistance(start, end):
 
     xDistance2 = (start[0] - end[0]) ** 2
@@ -16,7 +16,7 @@ def GetDistance(start, end):
     distance = (xDistance2 + yDistance2) ** 0.5
     return distance
 
-
+# gets the angle between three points (the angle of the middle parameter)
 def GetAnglePoints(trackStart, trackMid, trackEnd):
 
     aLength = GetDistance(trackStart, trackMid)
@@ -26,6 +26,7 @@ def GetAnglePoints(trackStart, trackMid, trackEnd):
     return GetAngleLengths(aLength, bLength, cLength)
 
 
+# gets the angle of three lengths using cosine rule (angle opposite length C)
 def GetAngleLengths(a, b, c):
 
     # derivation of cosine rule
@@ -39,7 +40,7 @@ def GetAngleLengths(a, b, c):
     C_deg = math.degrees(C_rad)
     return C_deg
 
-
+# returns if the user's points are within the target angle
 def WithinAngle(index, keyframes):
 
     keyframe = keyframes[index]
@@ -86,14 +87,15 @@ def WithinAngle(index, keyframes):
 def TrackKeyframe(index, keyframes):
 
     global gestureIndex
-
+    global prevGestureTime
+    
     keyframe = keyframes[index]
-    # frameType = keyframe.get("keyframeType")
+    frameType = keyframe.get("keyframeType")
 
-    # if (frameType == "triAngle"):
-
-    if WithinAngle(index, keyframes):
-        gestureIndex += 1
+    if (frameType == "triAngle"):
+        if WithinAngle(index, keyframes):
+            gestureIndex += 1
+            prevGestureTime = time.time()
 
     global finished
     finished = gestureIndex >= len(keyframes)
@@ -102,12 +104,6 @@ def TrackKeyframe(index, keyframes):
 filePath = "zBodyGestureAngle.json"
 with open(filePath, 'r') as f:
     pathJson = json.load(f)
-# checks compatible tracking type
-requiredTracking = "bodyAngles"
-fileType = pathJson.get("Type")
-if requiredTracking != fileType:
-    print(colored("Unsupported file type", "red"))
-    exit()
 
 mp_pose = mp.solutions.pose
 pose_model = mp_pose.Pose(
@@ -132,8 +128,6 @@ while capture.isOpened():
 
     width = 1280
     height = 720
-    # width = 1920
-    # height = 1080
 
     # processes this frame
     ret, frame = capture.read()
