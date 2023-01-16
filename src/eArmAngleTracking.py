@@ -7,6 +7,7 @@ import time
 
 gestureIndex = 0
 
+
 def GetDistance(start, end):
 
     xDistance2 = (start[0] - end[0]) ** 2
@@ -39,54 +40,70 @@ def GetAngleLengths(a, b, c):
     return C_deg
 
 
-def WithinAngle(index, points):
+def WithinAngle(index, keyframes):
 
-    point = points[index]
-    toTrack = point.get("toTrack")
-    targetAngle = point.get("angle")
-    leniency = point.get("leniency")
-    timeLimit = point.get("timeLimit")
-    
-    #checks how long since 
-    timeDifference = time.time() - prevGestureTime 
+    keyframe = keyframes[index]
+    toTrack = keyframe.get("toTrack")
+    targetAngle = keyframe.get("angle")
+    leniency = keyframe.get("leniency")
+    timeLimit = keyframe.get("timeLimit")
+
+    # checks how long since
+    timeDifference = time.time() - prevGestureTime
     if (timeLimit == -1 or timeDifference <= timeLimit):
 
-        #different points to track
+        # different points to track
         start = [results.pose_landmarks.landmark[toTrack[0]].x,
-                results.pose_landmarks.landmark[toTrack[0]].y]
+                 results.pose_landmarks.landmark[toTrack[0]].y]
 
         mid = [results.pose_landmarks.landmark[toTrack[1]].x,
-                results.pose_landmarks.landmark[toTrack[1]].y]
+               results.pose_landmarks.landmark[toTrack[1]].y]
 
         end = [results.pose_landmarks.landmark[toTrack[2]].x,
-                results.pose_landmarks.landmark[toTrack[2]].y]
+               results.pose_landmarks.landmark[toTrack[2]].y]
 
         elbowAngle = GetAnglePoints(start, mid, end)
 
-        #if the angle of the three points are that of the target
+        # if the angle of the three points are that of the target
         if elbowAngle > targetAngle - leniency and elbowAngle < targetAngle + leniency:
-            return True   
-    
-    #if the timelimit was set and the time taken is too long
+            return True
+
+    # if the timelimit was set and the time taken is too long
     if (timeLimit != -1 and timeDifference > timeLimit):
         global gestureIndex
         gestureIndex = 0
-        
+
     elif (timeLimit != -1 and timeDifference < timeLimit):
-        
+
         timeLeft = round(timeLimit - timeDifference, 2)
         timeString = "Time left: " + str(timeLeft) + "s"
-        #outputs the time left
+        # outputs the time left
         cv2.putText(image, timeString, (700, 70),
                     cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
-    return False      
+    return False
 
 
-# checks compatible tracking type
-requiredTracking = "bodyAngles"
-filePath = "zPunchingGesture.json"
+def TrackKeyframe(index, keyframes):
+
+    global gestureIndex
+
+    keyframe = keyframes[index]
+    # frameType = keyframe.get("keyframeType")
+
+    # if (frameType == "triAngle"):
+
+    if WithinAngle(index, keyframes):
+        gestureIndex += 1
+
+    global finished
+    finished = gestureIndex >= len(keyframes)
+
+
+filePath = "zBodyGestureAngle.json"
 with open(filePath, 'r') as f:
     pathJson = json.load(f)
+# checks compatible tracking type
+requiredTracking = "bodyAngles"
 fileType = pathJson.get("Type")
 if requiredTracking != fileType:
     print(colored("Unsupported file type", "red"))
@@ -107,7 +124,8 @@ mp_drawing_styles = mp.solutions.drawing_styles
 capture = cv2.VideoCapture(0)
 
 finished = False
-points = pathJson.get("Points")
+keyframes = pathJson.get("keyframes")
+# print(keyframes)
 prevGestureTime = time.time()
 
 while capture.isOpened():
@@ -135,11 +153,7 @@ while capture.isOpened():
 
     # if there were results to process
     if results.pose_landmarks and not finished:
-
-        if WithinAngle(gestureIndex, points):
-            gestureIndex += 1
-            finished = gestureIndex >= len(points)
-            prevGestureTime = time.time()
+        TrackKeyframe(gestureIndex, keyframes)
 
     # progress message
     if (finished):
