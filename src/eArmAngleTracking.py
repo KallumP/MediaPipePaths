@@ -5,7 +5,7 @@ from termcolor import colored
 import math
 import time
 
-gestureIndex = 0
+keyFrameIndex = 0
 
 # Returns the distance between two points
 def GetDistance(start, end):
@@ -41,16 +41,17 @@ def GetAngleLengths(a, b, c):
     return C_deg
 
 # returns if the user's points are within the target angle
-def WithinAngle(index, keyframes):
 
-    keyframe = keyframes[index]
-    toTrack = keyframe.get("toTrack")
-    targetAngle = keyframe.get("angle")
-    leniency = keyframe.get("leniency")
-    timeLimit = keyframe.get("timeLimit")
+
+def WithinAngle(index, point):
+
+    toTrack = point.get("toTrack")
+    targetAngle = point.get("angle")
+    leniency = point.get("leniency")
+    timeLimit = point.get("timeLimit")
 
     # checks how long since
-    timeDifference = time.time() - prevGestureTime
+    timeDifference = time.time() - prevKeyFrameTime
     if (timeLimit == -1 or timeDifference <= timeLimit):
 
         # different points to track
@@ -71,8 +72,8 @@ def WithinAngle(index, keyframes):
 
     # if the timelimit was set and the time taken is too long
     if (timeLimit != -1 and timeDifference > timeLimit):
-        global gestureIndex
-        gestureIndex = 0
+        global keyFrameIndex
+        keyFrameIndex = 0
 
     elif (timeLimit != -1 and timeDifference < timeLimit):
 
@@ -85,17 +86,16 @@ def WithinAngle(index, keyframes):
     return False
 
 
-#checks if a user's index is within a target position
-def WithinTarget(index, keyframes):
+# checks if a user's index is within a target position
+def WithinTarget(index, point):
 
-    #gets info from the json file
-    keyframe = keyframes[index]
-    toTrack = keyframe.get("toTrack")
-    leniency = keyframe.get("leniency")
-    targetPosition = [keyframe.get("target")[0], keyframe.get("target")[1]]
-    
-    #gets the point of the index to be tracked
-    indexPosition = [results.pose_landmarks.landmark[toTrack].x, results.pose_landmarks.landmark[toTrack].y]
+    toTrack = point.get("toTrack")
+    leniency = point.get("leniency")
+    targetPosition = [point.get("target")[0], point.get("target")[1]]
+
+    # gets the point of the index to be tracked
+    indexPosition = [results.pose_landmarks.landmark[toTrack].x,
+                     results.pose_landmarks.landmark[toTrack].y]
 
     distance = GetDistance(indexPosition, targetPosition)
 
@@ -105,30 +105,41 @@ def WithinTarget(index, keyframes):
     return False
 
 # Deals with tracking the next keyframe of the gesture file
+
+
 def TrackKeyframe(index, keyframes):
 
-    global gestureIndex
-    global prevGestureTime
+    global keyFrameIndex
+    global prevKeyFrameTime
     global finished
 
     keyframe = keyframes[index]
-    frameType = keyframe.get("keyframeType")
+    points = keyframe.get("points")
 
-    if (frameType == "triAngle"):
-        if WithinAngle(index, keyframes):
-            gestureIndex += 1
-            prevGestureTime = time.time()
+    # goes through each point in this keyframe
+    allPassed = True
+    for point in points:
 
-    elif (frameType == "body"):
-        if WithinTarget(gestureIndex, keyframes):
-            gestureIndex += 1
-            prevGestureTime = time.time()
+        # gest the point type
+        pointType = point.get("pointType")
 
-    else:
-        print(colored("Unsupported keyframe type, keyframe skipped", "red"))
-        gestureIndex += 1
+        if (pointType == "triPointAngle"):
+            if not WithinAngle(index, point):
+                allPassed = False
+                break
+        elif (pointType == "pointPosition"):
+            if not WithinTarget(keyFrameIndex, point):
+                allPassed = False
+                break
 
-    finished = gestureIndex >= len(keyframes)
+        else:
+            print(colored("Unsupported point type, point skipped", "red"))
+            break
+
+    if allPassed:
+        keyFrameIndex += 1
+        prevKeyFrameTime = time.time()
+        finished = keyFrameIndex >= len(keyframes)
 
 
 filePath = "zBodyGestureAngle.json"
@@ -151,8 +162,7 @@ capture = cv2.VideoCapture(0)
 
 finished = False
 keyframes = pathJson.get("keyframes")
-# print(keyframes)
-prevGestureTime = time.time()
+prevKeyFrameTime = time.time()
 
 while capture.isOpened():
 
@@ -177,14 +187,14 @@ while capture.isOpened():
 
     # if there were results to process
     if results.pose_landmarks and not finished:
-        TrackKeyframe(gestureIndex, keyframes)
+        TrackKeyframe(keyFrameIndex, keyframes)
 
     # progress message
     if (finished):
         cv2.putText(image, "Finished", (10, 70),
                     cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
     else:
-        cv2.putText(image, "Currently on: " + str(gestureIndex), (10, 70),
+        cv2.putText(image, "Currently on: " + str(keyFrameIndex), (10, 70),
                     cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
     # output image
@@ -195,7 +205,7 @@ while capture.isOpened():
         break
 
     elif key == 114:  # r key to restart
-        gestureIndex = 0
+        keyFrameIndex = 0
         finished = False
 
 capture.release()
