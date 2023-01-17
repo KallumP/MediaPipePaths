@@ -1,0 +1,7 @@
+sequence/gesture: a collection of movements that make up one big movement
+keyframe: each recorded freezeframe of a sequence
+point: a criteria that a set of indexes should match
+
+
+triPointAngle: the angle between three index
+pointPosition: the position of a single index
