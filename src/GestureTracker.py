@@ -5,11 +5,9 @@ from termcolor import colored
 import math
 import time
 
+
 # Returns the distance between two points
-
-
 def GetDistance(start, end):
-
     xDistance2 = (start[0] - end[0]) ** 2
     yDistance2 = (start[1] - end[1]) ** 2
 
@@ -19,7 +17,6 @@ def GetDistance(start, end):
 
 # gets the angle between three points (the angle of the middle parameter)
 def GetAnglePoints(trackStart, trackMid, trackEnd):
-
     aLength = GetDistance(trackStart, trackMid)
     bLength = GetDistance(trackMid, trackEnd)
     cLength = GetDistance(trackEnd, trackStart)
@@ -29,7 +26,6 @@ def GetAnglePoints(trackStart, trackMid, trackEnd):
 
 # gets the angle of three lengths using cosine rule (angle opposite length C)
 def GetAngleLengths(a, b, c):
-
     # derivation of cosine rule
     # c^2 = a^2+b^2 - 2ab Cos(C)
     # 0 = a^2+b^2 - c^2 - 2ab Cos(C)
@@ -37,25 +33,21 @@ def GetAngleLengths(a, b, c):
     # Cos(C) = (a^2+b^2 - c^2) / 2ab
     # C = Cos-1( (a^2+b^2 - c^2) / 2ab)
 
-    C_rad = math.acos((a**2 + b**2 - c**2) / (2*a*b))
+    C_rad = math.acos((a ** 2 + b ** 2 - c ** 2) / (2 * a * b))
     C_deg = math.degrees(C_rad)
     return C_deg
 
 
 # returns if the user's points are within the target angle
 def WithinAngle(index, point):
-
     toTrack = point.get("toTrack")
     targetAngle = point.get("angle")
     leniency = point.get("leniency")
 
     # different points to track
-    start = [results.pose_landmarks.landmark[toTrack[0]].x,
-             results.pose_landmarks.landmark[toTrack[0]].y]
-    mid = [results.pose_landmarks.landmark[toTrack[1]].x,
-           results.pose_landmarks.landmark[toTrack[1]].y]
-    end = [results.pose_landmarks.landmark[toTrack[2]].x,
-           results.pose_landmarks.landmark[toTrack[2]].y]
+    start = [results.pose_landmarks.landmark[toTrack[0]].x, results.pose_landmarks.landmark[toTrack[0]].y]
+    mid = [results.pose_landmarks.landmark[toTrack[1]].x, results.pose_landmarks.landmark[toTrack[1]].y]
+    end = [results.pose_landmarks.landmark[toTrack[2]].x, results.pose_landmarks.landmark[toTrack[2]].y]
 
     pointsAngle = GetAnglePoints(start, mid, end)
 
@@ -67,14 +59,12 @@ def WithinAngle(index, point):
 
 # checks if a user's index is within a target position
 def WithinTarget(index, point):
-
     toTrack = point.get("toTrack")
     leniency = point.get("leniency")
     targetPosition = [point.get("target")[0], point.get("target")[1]]
 
     # gets the point of the index to be tracked
-    indexPosition = [results.pose_landmarks.landmark[toTrack].x,
-                     results.pose_landmarks.landmark[toTrack].y]
+    indexPosition = [results.pose_landmarks.landmark[toTrack].x, results.pose_landmarks.landmark[toTrack].y]
 
     distance = GetDistance(indexPosition, targetPosition)
 
@@ -85,7 +75,6 @@ def WithinTarget(index, point):
 
 # Deals with tracking the next keyframe of the gesture file
 def TrackKeyframe(index, keyframes):
-
     global keyFrameIndex
     global prevKeyFrameTime
     global finished
@@ -140,19 +129,16 @@ pose_model = mp_pose.Pose(
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
-
-
-# (0) in VideoCapture is used to connect to your computer's default camera
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture(0) # video stream (the 0 implies the default camera
 
 filePath = "DemoGesture.json"
 with open(filePath, 'r') as f:
     pathJson = json.load(f)
-
+keyframes = pathJson.get("keyframes")
 keyFrameIndex = 0
 finished = False
-keyframes = pathJson.get("keyframes")
 prevKeyFrameTime = time.time()
+
 
 while capture.isOpened():
 

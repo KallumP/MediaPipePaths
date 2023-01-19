@@ -2,3 +2,4 @@ left and right are in relation to the camera point of view, not the person it is
 So it is the left side of the person (on frame) and not their actual left
 This needs to be taken into consideration for tracking something like left wrist (it is not necessarily your left)
 This should only cause confusion in phone development when the back camera is being used and the camera is pointing in the same direction the screen is being viewd in
+Or maybe this is caused by the video being flipped to look like a mirror...?

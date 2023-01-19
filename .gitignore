@@ -2,3 +2,5 @@
 ~$structions.docx
 desktop.ini
 *.tmp
+
+.idea/*
