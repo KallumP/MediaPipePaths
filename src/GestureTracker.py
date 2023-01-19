@@ -5,8 +5,9 @@ from termcolor import colored
 import math
 import time
 
-
 # Returns the distance between two points
+
+
 def GetDistance(start, end):
 
     xDistance2 = (start[0] - end[0]) ** 2
@@ -47,11 +48,14 @@ def WithinAngle(index, point):
     toTrack = point.get("toTrack")
     targetAngle = point.get("angle")
     leniency = point.get("leniency")
-   
+
     # different points to track
-    start = [results.pose_landmarks.landmark[toTrack[0]].x, results.pose_landmarks.landmark[toTrack[0]].y]
-    mid = [results.pose_landmarks.landmark[toTrack[1]].x, results.pose_landmarks.landmark[toTrack[1]].y]
-    end = [results.pose_landmarks.landmark[toTrack[2]].x, results.pose_landmarks.landmark[toTrack[2]].y]
+    start = [results.pose_landmarks.landmark[toTrack[0]].x,
+             results.pose_landmarks.landmark[toTrack[0]].y]
+    mid = [results.pose_landmarks.landmark[toTrack[1]].x,
+           results.pose_landmarks.landmark[toTrack[1]].y]
+    end = [results.pose_landmarks.landmark[toTrack[2]].x,
+           results.pose_landmarks.landmark[toTrack[2]].y]
 
     pointsAngle = GetAnglePoints(start, mid, end)
 
@@ -69,7 +73,8 @@ def WithinTarget(index, point):
     targetPosition = [point.get("target")[0], point.get("target")[1]]
 
     # gets the point of the index to be tracked
-    indexPosition = [results.pose_landmarks.landmark[toTrack].x,results.pose_landmarks.landmark[toTrack].y]
+    indexPosition = [results.pose_landmarks.landmark[toTrack].x,
+                     results.pose_landmarks.landmark[toTrack].y]
 
     distance = GetDistance(indexPosition, targetPosition)
 
@@ -87,6 +92,7 @@ def TrackKeyframe(index, keyframes):
 
     keyframe = keyframes[index]
     points = keyframe.get("points")
+    timeLimit = keyframe.get("timeLimit")
 
     # goes through each point in this keyframe
     allPassed = True
@@ -109,18 +115,17 @@ def TrackKeyframe(index, keyframes):
     # checks how long since the last keyframe
     timeDifference = time.time() - prevKeyFrameTime
     if (timeLimit == -1 or timeDifference <= timeLimit):
-        if allPased:
+        if allPassed:
             keyFrameIndex += 1
             prevKeyFrameTime = time.time()
             finished = keyFrameIndex >= len(keyframes)
             return
-    
+
     # if the timelimit was set and the time taken is too long
     if (timeLimit != -1 and timeDifference > timeLimit):
-        global keyFrameIndex
         keyFrameIndex = 0
 
-    #if there is still time left (but the points were not all met)
+    # if there is still time left (but the points were not all met)
     elif (timeLimit != -1 and timeDifference < timeLimit):
         timeLeft = round(timeLimit - timeDifference, 2)
         timeString = "Time left: " + str(timeLeft) + "s"
@@ -140,7 +145,7 @@ mp_drawing_styles = mp.solutions.drawing_styles
 # (0) in VideoCapture is used to connect to your computer's default camera
 capture = cv2.VideoCapture(0)
 
-filePath = "zBodyGestureAngle.json"
+filePath = "DemoGesture.json"
 with open(filePath, 'r') as f:
     pathJson = json.load(f)
 

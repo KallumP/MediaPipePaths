@@ -27,7 +27,8 @@
                     "angle": 150,
                     "leniency": 10
                 }
-            ]
+            ],
+            "timeLimit": -1
         },
         {
             "points": [
@@ -72,7 +73,8 @@
                 {
                     "pointType": "ts"
                 }
-            ]
+            ],
+            "timeLimit": -1
         }
     ]
 }
