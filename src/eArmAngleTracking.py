@@ -5,7 +5,6 @@ from termcolor import colored
 import math
 import time
 
-keyFrameIndex = 0
 
 # Returns the distance between two points
 def GetDistance(start, end):
@@ -15,6 +14,7 @@ def GetDistance(start, end):
 
     distance = (xDistance2 + yDistance2) ** 0.5
     return distance
+
 
 # gets the angle between three points (the angle of the middle parameter)
 def GetAnglePoints(trackStart, trackMid, trackEnd):
@@ -40,49 +40,24 @@ def GetAngleLengths(a, b, c):
     C_deg = math.degrees(C_rad)
     return C_deg
 
+
 # returns if the user's points are within the target angle
-
-
 def WithinAngle(index, point):
 
     toTrack = point.get("toTrack")
     targetAngle = point.get("angle")
     leniency = point.get("leniency")
-    timeLimit = point.get("timeLimit")
+   
+    # different points to track
+    start = [results.pose_landmarks.landmark[toTrack[0]].x, results.pose_landmarks.landmark[toTrack[0]].y]
+    mid = [results.pose_landmarks.landmark[toTrack[1]].x, results.pose_landmarks.landmark[toTrack[1]].y]
+    end = [results.pose_landmarks.landmark[toTrack[2]].x, results.pose_landmarks.landmark[toTrack[2]].y]
 
-    # checks how long since
-    timeDifference = time.time() - prevKeyFrameTime
-    if (timeLimit == -1 or timeDifference <= timeLimit):
+    pointsAngle = GetAnglePoints(start, mid, end)
 
-        # different points to track
-        start = [results.pose_landmarks.landmark[toTrack[0]].x,
-                 results.pose_landmarks.landmark[toTrack[0]].y]
-
-        mid = [results.pose_landmarks.landmark[toTrack[1]].x,
-               results.pose_landmarks.landmark[toTrack[1]].y]
-
-        end = [results.pose_landmarks.landmark[toTrack[2]].x,
-               results.pose_landmarks.landmark[toTrack[2]].y]
-
-        elbowAngle = GetAnglePoints(start, mid, end)
-
-        # if the angle of the three points are that of the target
-        if elbowAngle > targetAngle - leniency and elbowAngle < targetAngle + leniency:
-            return True
-
-    # if the timelimit was set and the time taken is too long
-    if (timeLimit != -1 and timeDifference > timeLimit):
-        global keyFrameIndex
-        keyFrameIndex = 0
-
-    elif (timeLimit != -1 and timeDifference < timeLimit):
-
-        timeLeft = round(timeLimit - timeDifference, 2)
-        timeString = "Time left: " + str(timeLeft) + "s"
-        # outputs the time left
-        cv2.putText(image, timeString, (700, 70),
-                    cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
-
+    # if the angle of the three points are that of the target
+    if pointsAngle > targetAngle - leniency and pointsAngle < targetAngle + leniency:
+        return True
     return False
 
 
@@ -94,19 +69,16 @@ def WithinTarget(index, point):
     targetPosition = [point.get("target")[0], point.get("target")[1]]
 
     # gets the point of the index to be tracked
-    indexPosition = [results.pose_landmarks.landmark[toTrack].x,
-                     results.pose_landmarks.landmark[toTrack].y]
+    indexPosition = [results.pose_landmarks.landmark[toTrack].x,results.pose_landmarks.landmark[toTrack].y]
 
     distance = GetDistance(indexPosition, targetPosition)
 
     if distance < leniency:
         return True
-
     return False
 
+
 # Deals with tracking the next keyframe of the gesture file
-
-
 def TrackKeyframe(index, keyframes):
 
     global keyFrameIndex
@@ -120,9 +92,8 @@ def TrackKeyframe(index, keyframes):
     allPassed = True
     for point in points:
 
-        # gest the point type
+        # gets the point type
         pointType = point.get("pointType")
-
         if (pointType == "triPointAngle"):
             if not WithinAngle(index, point):
                 allPassed = False
@@ -131,27 +102,36 @@ def TrackKeyframe(index, keyframes):
             if not WithinTarget(keyFrameIndex, point):
                 allPassed = False
                 break
-
         else:
             print(colored("Unsupported point type, point skipped", "red"))
             break
 
-    if allPassed:
-        keyFrameIndex += 1
-        prevKeyFrameTime = time.time()
-        finished = keyFrameIndex >= len(keyframes)
+    # checks how long since the last keyframe
+    timeDifference = time.time() - prevKeyFrameTime
+    if (timeLimit == -1 or timeDifference <= timeLimit):
+        if allPased:
+            keyFrameIndex += 1
+            prevKeyFrameTime = time.time()
+            finished = keyFrameIndex >= len(keyframes)
+            return
+    
+    # if the timelimit was set and the time taken is too long
+    if (timeLimit != -1 and timeDifference > timeLimit):
+        global keyFrameIndex
+        keyFrameIndex = 0
 
+    #if there is still time left (but the points were not all met)
+    elif (timeLimit != -1 and timeDifference < timeLimit):
+        timeLeft = round(timeLimit - timeDifference, 2)
+        timeString = "Time left: " + str(timeLeft) + "s"
+        cv2.putText(image, timeString, (700, 70),
+                    cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
-filePath = "zBodyGestureAngle.json"
-with open(filePath, 'r') as f:
-    pathJson = json.load(f)
 
 mp_pose = mp.solutions.pose
 pose_model = mp_pose.Pose(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5)
-
-# Initializing the drawing utils for drawing the facial landmarks on image
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -160,6 +140,11 @@ mp_drawing_styles = mp.solutions.drawing_styles
 # (0) in VideoCapture is used to connect to your computer's default camera
 capture = cv2.VideoCapture(0)
 
+filePath = "zBodyGestureAngle.json"
+with open(filePath, 'r') as f:
+    pathJson = json.load(f)
+
+keyFrameIndex = 0
 finished = False
 keyframes = pathJson.get("keyframes")
 prevKeyFrameTime = time.time()
