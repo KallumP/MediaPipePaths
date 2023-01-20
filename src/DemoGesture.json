@@ -28,7 +28,7 @@
                     "leniency": 10
                 }
             ],
-            "timeLimit": -1
+            "timeLimit": 3
         },
         {
             "points": [
