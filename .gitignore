@@ -4,3 +4,4 @@ desktop.ini
 *.tmp
 
 .idea/*
+*/__pycache__/
