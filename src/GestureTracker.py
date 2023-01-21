@@ -9,7 +9,7 @@ from helper import *
 
 # opens the file
 def OpenFile():
-    filePath = "DemoGesture.json"
+    filePath = "PullUp.json"
 
     global pathJson
     with open(filePath, 'r') as f:
