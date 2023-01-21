@@ -39,9 +39,9 @@ def WithinAngle(index, point, results):
     leniency = point.get("leniency")
 
     # different points to track
-    start = [results.pose_landmarks.landmark[toTrack[0]].x, results.pose_landmarks.landmark[toTrack[0]].y]
-    mid = [results.pose_landmarks.landmark[toTrack[1]].x, results.pose_landmarks.landmark[toTrack[1]].y]
-    end = [results.pose_landmarks.landmark[toTrack[2]].x, results.pose_landmarks.landmark[toTrack[2]].y]
+    start = [results[toTrack[0]].x, results[toTrack[0]].y]
+    mid = [results[toTrack[1]].x, results[toTrack[1]].y]
+    end = [results[toTrack[2]].x, results[toTrack[2]].y]
 
     pointsAngle = GetAnglePoints(start, mid, end)
 
@@ -58,7 +58,7 @@ def WithinTarget(index, point, results):
     targetPosition = [point.get("target")[0], point.get("target")[1]]
 
     # gets the point of the index to be tracked
-    indexPosition = [results.pose_landmarks.landmark[toTrack].x, results.pose_landmarks.landmark[toTrack].y]
+    indexPosition = [results[toTrack].x, results[toTrack].y]
 
     distance = GetDistance(indexPosition, targetPosition)
 

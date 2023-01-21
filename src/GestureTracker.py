@@ -6,7 +6,20 @@ import math
 import time
 from helper import *
 
-# Deals with tracking the next keyframe of the gesture file
+
+# opens the file
+def OpenFile():
+    filePath = "DemoGesture.json"
+
+    global pathJson
+    with open(filePath, 'r') as f:
+        pathJson = json.load(f)
+
+    fileType = pathJson.get("fileType")
+    return fileType == "body"
+
+
+# tracks the next keyframe of the gesture file
 def TrackKeyframe(index, keyframes):
     global keyFrameIndex
     global prevKeyFrameTime
@@ -23,11 +36,11 @@ def TrackKeyframe(index, keyframes):
         # gets the point type
         pointType = point.get("pointType")
         if (pointType == "triPointAngle"):
-            if not WithinAngle(index, point, results):
+            if not WithinAngle(index, point, results.pose_landmarks.landmark):
                 allPassed = False
                 break
         elif (pointType == "pointPosition"):
-            if not WithinTarget(keyFrameIndex, point, results):
+            if not WithinTarget(keyFrameIndex, point, results.pose_landmarks.landmark):
                 allPassed = False
                 break
         else:
@@ -55,21 +68,36 @@ def TrackKeyframe(index, keyframes):
                     cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
 
+# handles the keyboard inputs
+def KeyboardInputs():
+    key = cv2.waitKey(2)
+
+    if key == 27:  # esc key to quit
+        print("Exit button pressed")
+        return True
+
+    elif key == 114:  # r key to restart
+        keyFrameIndex = 0
+        finished = False
+
+    return False
+
+
+if not OpenFile():
+    print(colored("Bad file type", "red"))
+    exit()
+
 mp_pose = mp.solutions.pose
 pose_model = mp_pose.Pose()
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
-capture = cv2.VideoCapture(0) # video stream (the 0 implies the default camera
+capture = cv2.VideoCapture(0)  # video stream (the 0 implies the default camera
 
-filePath = "DemoGesture.json"
-with open(filePath, 'r') as f:
-    pathJson = json.load(f)
 keyframes = pathJson.get("keyframes")
 keyFrameIndex = 0
 finished = False
 prevKeyFrameTime = time.time()
-
 
 while capture.isOpened():
 
@@ -107,13 +135,8 @@ while capture.isOpened():
     # output image
     cv2.imshow("Body path tracking", image)
 
-    key = cv2.waitKey(2)
-    if key == 27:  # esc key to quit
+    if KeyboardInputs():
         break
-
-    elif key == 114:  # r key to restart
-        keyFrameIndex = 0
-        finished = False
 
 capture.release()
 cv2.destroyAllWindows()
