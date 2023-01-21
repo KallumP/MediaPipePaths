@@ -1,0 +1,19 @@
+How to use the editor
+
+Run the file: "GestureEditor.py"
+Move to the body position you want
+
+Press the following keys to save their respective metric:
+p = right wrist screen position
+a = angle of right shoulder, elbow, wrist
+
+You can press them multiple times to add more frames to the sequence
+
+Press the following keys to perform the respective actions:
+enter = save gesture to file and exit
+esc = exit (without saving)
+
+
+
+This file can now be tracked in "GestureTracker.py"
+Change the file name in code to track the newly made file
