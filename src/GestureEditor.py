@@ -10,15 +10,70 @@ import cv2
 import mediapipe as mp
 import json
 
+
 def AddPointsToKeyframes(points):
-
     global keyframes
-
     keyFrame = {
         "points": points,
         "timeLimit": -1
     }
     keyframes.append(keyFrame)
+
+
+def GetBodyMetrics(results):
+    global lastPosition
+    lastPosition = [results[toTrackPosition].x, results[toTrackPosition].y]
+
+    global lastAngle
+    lastAngle = GetAnglePoints(
+        [results[toTrackAngle[0]].x, results[toTrackAngle[0]].y],
+        [results[toTrackAngle[1]].x, results[toTrackAngle[1]].y],
+        [results[toTrackAngle[2]].x, results[toTrackAngle[2]].y])
+
+
+def KeyboardInputs():
+
+    key = cv2.waitKey(2)
+
+    if key == 27:  # esc key to quit
+        print("Exit button pressed")
+        return True
+
+    elif key == 112:  # p key to add a new point
+        print("New point added")
+        points = [{
+            "pointType": "pointPosition",
+            "toTrack": toTrackPosition,
+            "target": lastPosition,
+            "leniency": pointLeniency
+        }]
+        AddPointsToKeyframes(points)
+
+    elif key == 97:  # a key to add a new angle
+        print("New angle added")
+        points = [{
+            "pointType": "triPointAngle",
+            "toTrack": toTrackAngle,
+            "angle": lastAngle,
+            "leniency": angleLeniency
+        }]
+        AddPointsToKeyframes(points)
+
+    elif key == 13:  # enter to finish gesture
+        print("Finish button pressed")
+        if (keyframes != []):
+            with open("zBodyGesture.json", "w") as f:
+                toDump = {
+                    "fileType": "body",
+                    "keyframes": keyframes
+                }
+                json.dump(toDump, f)
+        else:
+            print("Empty array")
+        return True
+
+    return False
+
 
 mp_pose = mp.solutions.pose
 pose_model = mp_pose.Pose()
@@ -63,13 +118,7 @@ while capture.isOpened():
 
     # if there were results to process
     if results.pose_landmarks:
-        lastPosition = [results.pose_landmarks.landmark[toTrackPosition].x, results.pose_landmarks.landmark[toTrackPosition].y]
-
-        lastAngle = GetAnglePoints(
-            [results.pose_landmarks.landmark[toTrackAngle[0]].x, results.pose_landmarks.landmark[toTrackAngle[0]].y],
-            [results.pose_landmarks.landmark[toTrackAngle[1]].x, results.pose_landmarks.landmark[toTrackAngle[1]].y],
-            [results.pose_landmarks.landmark[toTrackAngle[2]].x, results.pose_landmarks.landmark[toTrackAngle[2]].y])
-
+        GetBodyMetrics(results.pose_landmarks.landmark)
 
     # progress message
     cv2.putText(image, "Points: " + str(len(keyframes)), (10, 70), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
@@ -77,40 +126,8 @@ while capture.isOpened():
     # outputs the message
     cv2.imshow("Gesture editor", image)
 
-    key = cv2.waitKey(2)
-    if key == 27:  # esc key to quit
+    if KeyboardInputs():
         break
-
-    elif key == 112:  # p key to add a new point
-        points = [{
-            "pointType": "pointPosition",
-            "toTrack": toTrackPosition,
-            "target": lastPosition,
-            "leniency": pointLeniency
-        }]
-        AddPointsToKeyframes(points)
-
-
-    elif key == 97:  # a key to add a new angle
-        points = [{
-            "pointType": "triPointAngle",
-            "toTrack": toTrackAngle,
-            "angle": lastAngle,
-            "leniency": angleLeniency
-        }]
-        AddPointsToKeyframes(points)
-
-    elif key == 13:  # enter to finish gesture
-        print("Finish button pressed")
-        if (keyframes != []):
-            with open("zBodyGesture.json", "w") as f:
-                toDump = {
-                    "fileType": "body",
-                    "keyframes": keyframes
-                }
-                json.dump(toDump, f)
-            break
-        print("Empty array")
 
 capture.release()
 cv2.destroyAllWindows()
