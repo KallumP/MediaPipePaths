@@ -1,4 +1,5 @@
 import math
+import time
 
 # Returns the distance between two points
 def GetDistance(start, end):
@@ -66,3 +67,15 @@ def WithinTarget(index, point, results):
         return True
     return False
 
+# checks if an index is above another index
+def AboveTarget(index, point, results):
+    toTrack = point.get("toTrack")
+    leniency = point.get("leniency")
+
+    # different points to track
+    index1y = results[toTrack[0]].y
+    index2y = results[toTrack[1]].y
+    
+    if  index2y - leniency > index1y:
+        return True
+    return False

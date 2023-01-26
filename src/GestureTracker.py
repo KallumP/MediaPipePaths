@@ -9,7 +9,7 @@ from helper import *
 
 # opens the file
 def OpenFile():
-    filePath = "PullUp.json"
+    filePath = "DemoGesture.json"
 
     global pathJson
     with open(filePath, 'r') as f:
@@ -66,7 +66,13 @@ def TrackKeyframe(index, keyframes):
                 allPassed = False
                 break
         elif (pointType == "pointPosition"):
+            #change from within to above
             if not WithinTarget(keyFrameIndex, point, results.pose_landmarks.landmark):
+                allPassed = False
+                break
+        elif (pointType == "abovePosition"):
+            #change from within to above
+            if not AboveTarget(keyFrameIndex, point, results.pose_landmarks.landmark):
                 allPassed = False
                 break
         else:
@@ -131,7 +137,6 @@ while capture.isOpened():
     # if there were results to process
     if results.pose_landmarks:
         TrackKeyframe(keyFrameIndex, keyframes)
-
 
     cv2.putText(image, "Currently on index: " + str(keyFrameIndex), (10, 70),
         cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
