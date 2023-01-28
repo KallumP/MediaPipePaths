@@ -6,33 +6,22 @@ import math
 import time
 from helper import *
 
-# Deals with tracking the next keyframe of the gesture file
-def TrackKeyframe(index, keyframes):
+
+# opens the file
+def OpenFile():
+    filePath = "DemoGesture.json"
+
+    global pathJson
+    with open(filePath, 'r') as f:
+        pathJson = json.load(f)
+
+    fileType = pathJson.get("fileType")
+    return fileType == "body"
+
+def HandleTiming(timeLimit, allPassed, keyframes):
     global keyFrameIndex
     global prevKeyFrameTime
-    global finished
-
-    keyframe = keyframes[index]
-    points = keyframe.get("points")
-    timeLimit = keyframe.get("timeLimit")
-
-    # goes through each point in this keyframe
-    allPassed = True
-    for point in points:
-
-        # gets the point type
-        pointType = point.get("pointType")
-        if (pointType == "triPointAngle"):
-            if not WithinAngle(index, point, results):
-                allPassed = False
-                break
-        elif (pointType == "pointPosition"):
-            if not WithinTarget(keyFrameIndex, point, results):
-                allPassed = False
-                break
-        else:
-            print(colored("Unsupported point type, point skipped", "red"))
-            break
+    global gestureDetectionCount
 
     # checks how long since the last keyframe
     timeDifference = time.time() - prevKeyFrameTime
@@ -40,7 +29,9 @@ def TrackKeyframe(index, keyframes):
         if allPassed:
             keyFrameIndex += 1
             prevKeyFrameTime = time.time()
-            finished = keyFrameIndex >= len(keyframes)
+            if keyFrameIndex >= len(keyframes):
+                keyFrameIndex = 0
+                gestureDetectionCount += 1
             return
 
     # if the timelimit was set and the time taken is too long
@@ -54,22 +45,73 @@ def TrackKeyframe(index, keyframes):
         cv2.putText(image, timeString, (700, 70),
                     cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
+# tracks the next keyframe of the gesture file
+def TrackKeyframe(index, keyframes):
+    global keyFrameIndex
+    global prevKeyFrameTime
+    global gestureDetectionCount
+
+    keyframe = keyframes[index]
+    points = keyframe.get("points")
+    timeLimit = keyframe.get("timeLimit")
+
+    # goes through each point in this keyframe
+    allPassed = True
+    for point in points:
+    
+        # gets the point type
+        pointType = point.get("pointType")
+        if (pointType == "triPointAngle"):
+            if not WithinAngle(index, point, results.pose_landmarks.landmark):
+                allPassed = False
+                break
+        elif (pointType == "pointPosition"):
+            #change from within to above
+            if not WithinTarget(keyFrameIndex, point, results.pose_landmarks.landmark):
+                allPassed = False
+                break
+        elif (pointType == "abovePosition"):
+            #change from within to above
+            if not AboveTarget(keyFrameIndex, point, results.pose_landmarks.landmark):
+                allPassed = False
+                break
+        else:
+            print(colored("Unsupported point type, point skipped", "red"))
+            break
+
+    HandleTiming(timeLimit, allPassed, keyframes)
+
+
+# handles the keyboard inputs
+def KeyboardInputs():
+    global keyFrameIndex
+
+    key = cv2.waitKey(2)
+    if key == 27:  # esc key to quit
+        print("Exit button pressed")
+        return True
+
+    elif key == 114:  # r key to restart
+        keyFrameIndex = 0
+
+    return False
+
+
+if not OpenFile():
+    print(colored("Bad file type", "red"))
+    exit()
 
 mp_pose = mp.solutions.pose
 pose_model = mp_pose.Pose()
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
-capture = cv2.VideoCapture(0) # video stream (the 0 implies the default camera
+capture = cv2.VideoCapture(0)  # video stream (the 0 implies the default camera
 
-filePath = "DemoGesture.json"
-with open(filePath, 'r') as f:
-    pathJson = json.load(f)
 keyframes = pathJson.get("keyframes")
 keyFrameIndex = 0
-finished = False
+gestureDetectionCount = 0
 prevKeyFrameTime = time.time()
-
 
 while capture.isOpened():
 
@@ -93,27 +135,20 @@ while capture.isOpened():
     image = cv2.flip(image, 1)
 
     # if there were results to process
-    if results.pose_landmarks and not finished:
+    if results.pose_landmarks:
         TrackKeyframe(keyFrameIndex, keyframes)
 
-    # progress message
-    if (finished):
-        cv2.putText(image, "Finished", (10, 70),
-                    cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
-    else:
-        cv2.putText(image, "Currently on: " + str(keyFrameIndex), (10, 70),
-                    cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+    cv2.putText(image, "Currently on index: " + str(keyFrameIndex), (10, 70),
+        cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
+
+    cv2.putText(image, "Gestures detected: " + str(gestureDetectionCount), (700, 70),
+        cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
     # output image
     cv2.imshow("Body path tracking", image)
 
-    key = cv2.waitKey(2)
-    if key == 27:  # esc key to quit
+    if KeyboardInputs():
         break
-
-    elif key == 114:  # r key to restart
-        keyFrameIndex = 0
-        finished = False
 
 capture.release()
 cv2.destroyAllWindows()

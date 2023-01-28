@@ -92,7 +92,7 @@ pointLeniency = 0.1
 # triPointAngle
 toTrackAngle = [16, 14, 12]
 lastAngle = 0
-angleLeniency = 10
+angleLeniency = 20
 
 # runs while the
 while capture.isOpened():
