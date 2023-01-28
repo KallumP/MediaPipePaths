@@ -58,7 +58,7 @@ def TrackKeyframe(index, keyframes):
     # goes through each point in this keyframe
     allPassed = True
     for point in points:
-
+    
         # gets the point type
         pointType = point.get("pointType")
         if (pointType == "triPointAngle"):

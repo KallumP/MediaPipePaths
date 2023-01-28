@@ -35,47 +35,60 @@ def GetAngleLengths(a, b, c):
 
 # returns if the user's points are within the target angle
 def WithinAngle(index, point, results):
-    toTrack = point.get("toTrack")
-    targetAngle = point.get("angle")
-    leniency = point.get("leniency")
+    if CheckWithinFrame(point, results):
+        toTrack = point.get("toTrack")
+        targetAngle = point.get("angle")
+        leniency = point.get("leniency")
 
-    # different points to track
-    start = [results[toTrack[0]].x, results[toTrack[0]].y]
-    mid = [results[toTrack[1]].x, results[toTrack[1]].y]
-    end = [results[toTrack[2]].x, results[toTrack[2]].y]
+        # different points to track
+        start = [results[toTrack[0]].x, results[toTrack[0]].y]
+        mid = [results[toTrack[1]].x, results[toTrack[1]].y]
+        end = [results[toTrack[2]].x, results[toTrack[2]].y]
 
-    pointsAngle = GetAnglePoints(start, mid, end)
+        pointsAngle = GetAnglePoints(start, mid, end)
 
-    # if the angle of the three points are that of the target
-    if pointsAngle > targetAngle - leniency and pointsAngle < targetAngle + leniency:
-        return True
+        # if the angle of the three points are that of the target
+        if pointsAngle > targetAngle - leniency and pointsAngle < targetAngle + leniency:
+            return True
     return False
 
 
 # checks if a user's index is within a target position
 def WithinTarget(index, point, results):
-    toTrack = point.get("toTrack")
-    leniency = point.get("leniency")
-    targetPosition = [point.get("target")[0], point.get("target")[1]]
+    if CheckWithinFrame(point, results):
+        toTrack = point.get("toTrack")
+        leniency = point.get("leniency")
+        targetPosition = [point.get("target")[0], point.get("target")[1]]
 
-    # gets the point of the index to be tracked
-    indexPosition = [results[toTrack].x, results[toTrack].y]
+        # gets the point of the index to be tracked
+        indexPosition = [results[toTrack].x, results[toTrack].y]
 
-    distance = GetDistance(indexPosition, targetPosition)
+        distance = GetDistance(indexPosition, targetPosition)
 
-    if distance < leniency:
-        return True
+        if distance < leniency:
+            return True
     return False
 
 # checks if an index is above another index
 def AboveTarget(index, point, results):
-    toTrack = point.get("toTrack")
-    leniency = point.get("leniency")
+    if CheckWithinFrame(point, results):
+        toTrack = point.get("toTrack")
+        leniency = point.get("leniency")
 
-    # different points to track
-    index1y = results[toTrack[0]].y
-    index2y = results[toTrack[1]].y
-    
-    if  index2y - leniency > index1y:
-        return True
+        # different points to track
+        index1y = results[toTrack[0]].y
+        index2y = results[toTrack[1]].y
+        
+        if  index2y - leniency > index1y:
+            return True
     return False
+
+def CheckWithinFrame(point, results):
+    toTrack = point.get("toTrack")
+    withinFrame = True
+    for target in toTrack:
+        if results[target].x > 1 or results[target].x < 0 or results[target].y > 1 or results[target].y < 0:
+            withinFrame = False  
+            print("Index out of frame") 
+
+    return withinFrame
