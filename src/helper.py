@@ -92,3 +92,8 @@ def CheckWithinFrame(point, results):
             print("Index out of frame") 
 
     return withinFrame
+
+def IndexDistance (point1, point2):
+    x = (point2.x - point1.x) ** 2
+    y = (point2.y - point1.y) ** 2
+    return math.sqrt(x + y)
