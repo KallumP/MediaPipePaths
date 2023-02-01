@@ -4,6 +4,21 @@
         {
             "points": [
                 {
+                    "pointType": "parallelLines",
+                    "toTrack": [
+                        16,
+                        14,
+                        13,
+                        15
+                    ],
+                    "leniency": 1
+                }
+            ],
+            "timeLimit": -1
+        },
+        {
+            "points": [
+                {
                     "pointType": "triPointAngle",
                     "toTrack": [
                         16,

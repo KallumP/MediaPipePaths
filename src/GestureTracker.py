@@ -9,7 +9,7 @@ from helper import *
 
 # opens the file
 def OpenFile():
-    filePath = "PullUp.json"
+    filePath = "c:/Users/10217/Desktop/MediaPipePaths/src/DemoGesture.json"
 
     global pathJson
     with open(filePath, 'r') as f:
@@ -67,6 +67,10 @@ def TrackKeyframe(index, keyframes):
                 break
         elif (pointType == "pointPosition"):
             if not WithinTarget(keyFrameIndex, point, results.pose_landmarks.landmark):
+                allPassed = False
+                break
+        elif (pointType == "parallelLines"):
+            if not parallel(keyFrameIndex, point, results.pose_landmarks.landmark):
                 allPassed = False
                 break
         else:
