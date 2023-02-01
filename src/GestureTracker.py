@@ -70,6 +70,10 @@ def TrackKeyframe(index, keyframes):
             if not WithinTarget(keyFrameIndex, point, results.pose_landmarks.landmark):
                 allPassed = False
                 break
+        elif (pointType == "parallelLines"):
+            if not parallel(keyFrameIndex, point, results.pose_landmarks.landmark):
+                allPassed = False
+                break
         elif (pointType == "abovePosition"):
             #change from within to above
             if not AboveTarget(keyFrameIndex, point, results.pose_landmarks.landmark):

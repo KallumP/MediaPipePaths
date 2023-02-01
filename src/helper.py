@@ -1,4 +1,5 @@
 import math
+import sys
 import time
 
 # Returns the distance between two points
@@ -81,6 +82,33 @@ def AboveTarget(index, point, results):
         
         if  index2y - leniency > index1y:
             return True
+    return False
+
+# gets the slope of a line decided by two points
+def GetSlope(start, end):
+    if start[0] == end[0]:
+        return sys.maxsize
+    slope = (start[1] - end[1]) / (start[0] - end[0])
+    return slope
+
+# checks if a user's two bones are parallel
+def parallel(index, point, results):
+    toTrack = point.get("toTrack")
+    leniency = point.get("leniency")
+
+    # different points to calculate
+    startLine1 = [results[toTrack[0]].x, results[toTrack[0]].y]
+    endLine1 = [results[toTrack[1]].x, results[toTrack[1]].y]
+    startLine2 = [results[toTrack[2]].x, results[toTrack[2]].y]
+    endLine2 = [results[toTrack[3]].x, results[toTrack[3]].y]
+
+    # get the slope of line decided by two points
+    slope1 = GetSlope(startLine1, endLine1)
+    slope2 = GetSlope(startLine2, endLine2)
+
+    if slope1 >  slope2 - leniency and slope1 < slope2 + leniency:
+        print("parallel success")
+        return True
     return False
 
 def CheckWithinFrame(point, results):
