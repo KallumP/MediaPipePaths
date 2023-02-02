@@ -92,7 +92,7 @@
             ],
             "timeLimit": -1
         },
-         "points": [
+        { "points": [
                 {
                     "pointType": "abovePosition",
                     "toTrack": [
