@@ -1,6 +1,22 @@
 {
     "fileType": "body",
     "keyframes": [
+        {  
+            "points": [
+                {
+                    "pointType": "pointPosition",
+                    "toTrack":[
+                        16
+                    ],
+                    "target": [
+                        0.8434030413627625,
+                        0.22684329748153687
+                    ],
+                    "leniency": 0.1
+                }
+            ],
+            "timeLimit": -1
+        },
         {
             "points": [
                 {
@@ -60,29 +76,6 @@
                 }
             ],
             "timeLimit": 0.8
-        },
-        {  
-            "points": [
-                {
-                    "pointType": "pointPosition",
-                    "toTrack":16,
-                    "target": [
-                        0.8434030413627625,
-                        0.22684329748153687
-                    ],
-                    "leniency": 0.1
-                },
-                {
-                    "pointType": "pointPosition",
-                    "toTrack":15,
-                    "target": [
-                        0.8434030413627625,
-                        0.22684329748153687
-                    ],
-                    "leniency": 0.1
-                }
-            ],
-            "timeLimit": -1
         },
         {
             "points": [
