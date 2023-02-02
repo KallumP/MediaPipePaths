@@ -62,12 +62,11 @@ def WithinTarget(index, point, results):
         targetPosition = [point.get("target")[0], point.get("target")[1]]
 
         # gets the point of the index to be tracked
-        indexPosition = [results[toTrack].x, results[toTrack].y]
-
+        indexPosition = [results[toTrack[0]].x, results[toTrack[0]].y]
         distance = GetDistance(indexPosition, targetPosition)
 
         if distance < leniency:
-            return True
+            return True     
     return False
 
 # checks if an index is above another index
@@ -117,6 +116,6 @@ def CheckWithinFrame(point, results):
     for target in toTrack:
         if results[target].x > 1 or results[target].x < 0 or results[target].y > 1 or results[target].y < 0:
             withinFrame = False  
-            print("Index out of frame") 
+            #print("Index out of frame") 
 
     return withinFrame
