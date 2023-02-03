@@ -1,4 +1,5 @@
 import math
+import sys
 import time
 
 # Returns the distance between two points
@@ -61,12 +62,11 @@ def WithinTarget(index, point, results):
         targetPosition = [point.get("target")[0], point.get("target")[1]]
 
         # gets the point of the index to be tracked
-        indexPosition = [results[toTrack].x, results[toTrack].y]
-
+        indexPosition = [results[toTrack[0]].x, results[toTrack[0]].y]
         distance = GetDistance(indexPosition, targetPosition)
 
         if distance < leniency:
-            return True
+            return True     
     return False
 
 # checks if an index is above another index
@@ -83,13 +83,40 @@ def AboveTarget(index, point, results):
             return True
     return False
 
+# gets the slope of a line decided by two points
+def GetSlope(start, end):
+    if start[0] == end[0]:
+        return sys.maxsize
+    slope = (start[1] - end[1]) / (start[0] - end[0])
+    return slope
+
+# checks if a user's two bones are parallel
+def parallel(index, point, results):
+    toTrack = point.get("toTrack")
+    leniency = point.get("leniency")
+
+    # different points to calculate
+    startLine1 = [results[toTrack[0]].x, results[toTrack[0]].y]
+    endLine1 = [results[toTrack[1]].x, results[toTrack[1]].y]
+    startLine2 = [results[toTrack[2]].x, results[toTrack[2]].y]
+    endLine2 = [results[toTrack[3]].x, results[toTrack[3]].y]
+
+    # get the slope of line decided by two points
+    slope1 = GetSlope(startLine1, endLine1)
+    slope2 = GetSlope(startLine2, endLine2)
+
+    if slope1 >  slope2 - leniency and slope1 < slope2 + leniency:
+        print("parallel success")
+        return True
+    return False
+
 def CheckWithinFrame(point, results):
     toTrack = point.get("toTrack")
     withinFrame = True
     for target in toTrack:
         if results[target].x > 1 or results[target].x < 0 or results[target].y > 1 or results[target].y < 0:
             withinFrame = False  
-            print("Index out of frame") 
+            #print("Index out of frame") 
 
     return withinFrame
 
