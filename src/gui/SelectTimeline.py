@@ -41,13 +41,13 @@ class SelectTimeline(Screen):
         if self.scrollview: self.remove_widget(self.scrollview) 
         
         os.chdir('timelines')
-        timelines = [f for f in listdir('.') if isfile(join('.', f))]
+        timelines = [f for f in listdir('.')]
         os.chdir('..')
 
         button_area = GridLayout(cols=1, size_hint_y=None)
         button_area.bind(minimum_height=button_area.setter("height"))
         for timeline in timelines:
-            timeline = timeline.replace('.json', '')
+            #timeline = timeline.replace('.json', '')
             timeline_btn = Button(text=timeline, size_hint=(0.5, None))
             timeline_btn.bind(on_press=self.open_timeline)
             button_area.add_widget(timeline_btn)
@@ -62,15 +62,8 @@ class SelectTimeline(Screen):
 
     def open_timeline(self, instance):
         os.chdir('timelines')
-        filePath = str(instance.text) + ".json"
-
-        #global pathJson
-        with open(filePath, 'r') as f:
-            pathJson = json.load(f)
-
-        fileType = pathJson.get("fileType")
-        os.chdir('..')
-        return fileType == "body", pathJson
+        os.chdir(instance.text)
+        self.manager.current = 'edit timeline'  
 
     def cancel_create(self, instance):
         self.manager.current = 'home'

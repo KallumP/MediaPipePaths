@@ -65,9 +65,7 @@ class NewTimeline(Screen):
             os.mkdir(path)
             os.chdir(path)
             f = open("TimelineList.json", "w")
-            TimelineListContent = """
-            \{\n    "fileType": "timeline",\n       "timeline": [\n   ]\n}"           
-            """
+            TimelineListContent = """{\n    "fileType": "timeline",\n    "timeline": [\n    ]\n}"""           
             f.write(TimelineListContent)
             f.close()   
 
