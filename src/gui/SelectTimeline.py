@@ -70,7 +70,6 @@ class SelectTimeline(Screen):
 
         fileType = pathJson.get("fileType")
         os.chdir('..')
-        self.manager.current = 'edit timeline'
         return fileType == "body", pathJson
 
     def cancel_create(self, instance):
