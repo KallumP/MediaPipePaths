@@ -8,8 +8,11 @@ import os
 #import src.GestureTracker
 import src.gui.HomeScreen
 import src.gui.SelectTimeline
-import src.gui.EditTimeline
 import src.gui.NewTimeline
+import src.gui.EditTimeline
+import src.gui.NewExercise
+import src.gui.EditExercise
+import src.gui.RecordFrame
 #from src.gui import
 
 class ScreenManagement(ScreenManager):
@@ -24,9 +27,10 @@ class Application(App):
         sm.add_widget(src.gui.SelectTimeline.SelectTimeline(name='select timeline'))
         sm.add_widget(src.gui.NewTimeline.NewTimeline(name='new timeline'))
         sm.add_widget(src.gui.EditTimeline.EditTimeline(name='edit timeline'))
-        #sm.add_widget(src.gui.NewExercise(name='new exercise'))
-        #sm.add_widget(src.gui.EditExercise(name='edit exercise'))
-        #sm.add_widget(src.gui.RecordFrame(name='record frame'))
+        sm.add_widget(src.gui.NewExercise.NewExercise(name='new exercise'))
+        sm.add_widget(src.gui.EditExercise.EditExercise(name='edit exercise'))
+        sm.add_widget(src.gui.RecordFrame.RecordFrame(name='record frame'))
+        
         return sm
 
 if __name__ == "__main__":  

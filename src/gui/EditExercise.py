@@ -19,14 +19,14 @@ class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenManagement, self).__init__(**kwargs)
 
-class EditTimeline(Screen):
+class EditExercise(Screen):
     def __init__(self, **kwargs):
-        super(EditTimeline, self).__init__(**kwargs) 
+        super(EditExercise, self).__init__(**kwargs) 
         self.layout = FloatLayout()
 
-        new_exercise_btn = Button(text="Add new exercise",size_hint=(1, 0.05),pos_hint={'center_y': 0.5, 'center_x': 0.5})
-        new_exercise_btn.bind(on_press=self.create_exercise)
-        self.layout.add_widget(new_exercise_btn)
+        record_frame_btn = Button(text="Record frame exercise",size_hint=(1, 0.05),pos_hint={'center_y': 0.5, 'center_x': 0.5})
+        record_frame_btn.bind(on_press=self.record_frame)
+        self.layout.add_widget(record_frame_btn)
 
         cancel_btn = Button(text="Cancel",size_hint=(1, 0.05))
         cancel_btn.bind(on_press=self.cancel)
@@ -34,8 +34,8 @@ class EditTimeline(Screen):
 
         self.add_widget(self.layout)
 
-    def create_exercise(self, instance):
-        self.manager.current = 'new exercise'
+    def record_frame(self, instance):
+        self.manager.current = 'record frame'
 
     def cancel(self, instance):
-        self.manager.current = 'home'
+        self.manager.current = 'edit timeline'
