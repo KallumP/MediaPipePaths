@@ -1,0 +1,29 @@
+{
+    "fileType": "body",
+    "keyframes": [
+        { "points": [
+                {
+                    "pointType": "abovePosition",
+                    "toTrack": [
+                        16,
+                        14
+                    ],
+                    "leniency": 0.1
+                }
+            ],
+            "timeLimit": -1
+        },
+        { "points": [
+                {
+                    "pointType": "abovePosition",
+                    "toTrack": [
+                        15,
+                        13
+                    ],
+                    "leniency": 0.1
+                }
+            ],
+            "timeLimit": -1
+        }
+    ]
+}
