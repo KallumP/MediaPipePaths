@@ -22,7 +22,7 @@ def AddPointsToKeyframes(points):
 
 def GetBodyMetrics(results):
     global lastPosition
-    lastPosition = [results[toTrackPosition].x, results[toTrackPosition].y]
+    lastPosition = [results[toTrackPosition[0]].x, results[toTrackPosition[0]].y]
 
     global lastAngle
     lastAngle = GetAnglePoints(
@@ -85,7 +85,7 @@ capture = cv2.VideoCapture(0)  # video stream (the 0 implies the default camera
 keyframes = []
 
 # pointPosition
-toTrackPosition = 16
+toTrackPosition = [16]
 lastPosition = [0, 0]
 pointLeniency = 0.1
 
