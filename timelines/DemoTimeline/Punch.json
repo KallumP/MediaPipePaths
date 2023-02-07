@@ -1,0 +1,50 @@
+{
+    "fileType": "body",
+    "keyframes": [
+        {
+            "points": [
+                {
+                    "pointType": "triPointAngle",
+                    "toTrack": [
+                        16,
+                        14,
+                        12
+                    ],
+                    "angle": 20,
+                    "leniency": 10
+                }
+            ],
+            "timeLimit": -1
+        },
+        {
+            "points": [
+                {
+                    "pointType": "triPointAngle",
+                    "toTrack": [
+                        16,
+                        14,
+                        12
+                    ],
+                    "angle": 150,
+                    "leniency": 10
+                }
+            ],
+            "timeLimit": 3
+        },
+        {
+            "points": [
+                {
+                    "pointType": "triPointAngle",
+                    "toTrack": [
+                        16,
+                        14,
+                        12
+                    ],
+                    "angle": 20,
+                    "leniency": 10
+                }
+            ],
+            "timeLimit": 0.8
+        }
+    ]
+}
