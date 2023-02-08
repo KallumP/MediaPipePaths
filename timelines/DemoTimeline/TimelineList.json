@@ -2,15 +2,12 @@
     "fileType": "timeline",
     "timeline": [
         {
-            "links": "https://google.github.io/mediapipe/",
             "exercise": "Punch.json"
         },
         {
-            "links": "https://google.github.io/mediapipe/getting_started/python",
             "exercise": "RaiseArm.json"
         },
         {
-            "links": "https://google.github.io/mediapipe/",
             "exercise": "ParallelArms.json"
         }
     ]
