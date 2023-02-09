@@ -35,9 +35,9 @@ class SelectTimeline(Screen):
 
         self.add_widget(self.layout)
         
-        self.list_scenarios()
+        self.list_timeline()
 
-    def list_scenarios(self):
+    def list_timeline(self):
         if self.scrollview: self.remove_widget(self.scrollview) 
         
         os.chdir('timelines')
@@ -58,12 +58,36 @@ class SelectTimeline(Screen):
 
     def refresh(self, instance):
         if self.scrollview: self.layout.remove_widget(self.scrollview) 
-        self.list_scenarios()
+        self.list_timeline()
 
     def open_timeline(self, instance):
         os.chdir('timelines')
         os.chdir(instance.text)
+        self.read_timeline()
         self.manager.current = 'edit timeline'  
+        
 
     def cancel_create(self, instance):
         self.manager.current = 'home'
+
+    def read_timeline(self):
+        try:
+            with open("TimelineList.json", 'r') as f:
+                pathJson = json.load(f)
+
+            self.fileType = pathJson.get("fileType")
+            self.timeline = pathJson.get("timeline")
+            self.update_screen_with_timeline()
+        except:
+            f = open("TimelineList.json", "w")
+            TimelineListContent = """{\n    "fileType": "timeline",\n    "timeline": [\n    ]\n}"""           
+            f.write(TimelineListContent)
+            f.close()  
+            self.read_timeline()
+
+    
+    def update_screen_with_timeline(self):
+        editTimeline = self.manager.get_screen('edit timeline')
+        for exercise in self.timeline:          
+            btn1 = Button(text=exercise.get("exercise").replace('.json', ''))
+            editTimeline.timeline_layout.add_widget(btn1)
