@@ -2,19 +2,13 @@
     "fileType": "timeline",
     "timeline": [
         {
-            "exercise": "6.json"
+            "exercise": "RaiseArm.json"
         },
         {
-            "exercise": "3.json"
+            "exercise": "ParallelArms.json"
         },
         {
-            "exercise": "4.json"
-        },
-        {
-            "exercise": "5.json"
-        },
-        {
-            "exercise": "2.json"
+            "exercise": "Punch.json"
         }
     ]
 }
