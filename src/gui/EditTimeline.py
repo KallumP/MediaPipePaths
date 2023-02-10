@@ -62,7 +62,6 @@ class EditTimeline(Screen):
         self.add_widget(self.l)
 
     def on_start(self):
-        #Print statement - Debugging Purposes Only
         Item = Factory.MyDraggableItem
         Item()
         add_widget = self.l.ids.ReorderableLayout.add_widget
@@ -78,10 +77,19 @@ class EditTimeline(Screen):
     def saveTimeline(self, instance):
         updatedList=[]
         for widget in self.l.ids.ReorderableLayout.children:
-            #Check if widget is of type draggable item and insert into list if true
-            #Important to insert at index 0, and not append, as layouts have a stack-like structure
             if(str(type(widget))=="<class 'kivy.factory.MyDraggableItem'>"):
                 updatedList.insert(0, widget.text)
-        #Print the Updated List for Now, Can return list if needed
-        print(updatedList)
+
+        f = open("TimelineList.json", "w")
+        content = """{\n    "fileType": "timeline",\n    "timeline": [\n"""  
+
+        for exercise in updatedList:
+            content += """        {\n            "exercise": \"""" + exercise + """.json"\n        },\n"""
+
+        content = content.rsplit(',', 1)[0]
+
+        content += """\n    ]\n}"""  
+        f.write(content) 
+        f.close()  
+
         

@@ -1,5 +1,20 @@
 {
     "fileType": "timeline",
     "timeline": [
+        {
+            "exercise": "6.json"
+        },
+        {
+            "exercise": "3.json"
+        },
+        {
+            "exercise": "4.json"
+        },
+        {
+            "exercise": "5.json"
+        },
+        {
+            "exercise": "2.json"
+        }
     ]
 }
