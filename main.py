@@ -21,7 +21,7 @@ class ScreenManagement(ScreenManager):
 
 class Application(App):
     def build(self):
-
+        os.chdir('timelines')
         sm = ScreenManagement(transition=FadeTransition())
         sm.add_widget(src.gui.HomeScreen.HomeScreen(name='home'))
         sm.add_widget(src.gui.SelectTimeline.SelectTimeline(name='select timeline'))
