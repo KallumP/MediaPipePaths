@@ -1,41 +1,67 @@
-from imp import reload
-from re import L, template
-import re
-from turtle import onclick
+from kivy.lang import Builder
+from kivy.factory import Factory
 from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.floatlayout import FloatLayout
+import kivy_garden.draggable
 from kivy.uix.button import Button
-from kivy.uix.scrollview import ScrollView
-from kivy.uix.screenmanager import ScreenManager, Screen
 
-import os
-import os.path
-from os import listdir
-from os.path import isfile, join
-import json
+KV_CODE = '''
+<MyReorderableLayout@KXReorderableBehavior+StackLayout>:
+    spacing: 10
+    padding: 10
+    cols: 4
+    drag_classes: ['test', ]
+<MyDraggableItem@KXDraggableBehavior+Label>:
+    font_size: 30
+    text: root.text
+    drag_timeout: 0
+    drag_cls: 'test'
+    canvas.after:
+        Color:
+            rgba: .5, 1, 0, 1 if root.is_being_dragged else .5
+        Line:
+            width: 2 if root.is_being_dragged else 1
+            rectangle: [*self.pos, *self.size, ]
+ScrollView:
+    MyReorderableLayout:
+        id: layout
+        size_hint_min: self.minimum_size
+'''
 
-class ScreenManagement(ScreenManager):
-    def __init__(self, **kwargs):
-        super(ScreenManagement, self).__init__(**kwargs)
+#Constant Variables
+WIDTH = 100
+HEIGHT = 50
 
-class EditTimeline(Screen):
-    def __init__(self, **kwargs):
-        super(EditTimeline, self).__init__(**kwargs) 
-        self.layout = FloatLayout()
+#List for Testing - To remove and replace with Json list
+pyList = ['2', '3', '4', '5', '6']
 
-        new_exercise_btn = Button(text="Add new exercise",size_hint=(1, 0.05),pos_hint={'center_y': 0.5, 'center_x': 0.5})
-        new_exercise_btn.bind(on_press=self.create_exercise)
-        self.layout.add_widget(new_exercise_btn)
+class EditTimeline(App):
+    def  build(self):
+        return Builder.load_string(KV_CODE)
 
-        cancel_btn = Button(text="Cancel",size_hint=(1, 0.05))
-        cancel_btn.bind(on_press=self.cancel)
-        self.layout.add_widget(cancel_btn)
+    def on_start(self):
+        #Print statement - Debugging Purposes Only
+        Item = Factory.MyDraggableItem
+        Item()
+        add_widget = self.root.ids.layout.add_widget
 
-        self.add_widget(self.layout)
+        #Replace with Json list
+        for i in pyList:
+            add_widget(Item(text=str(i), size=(WIDTH, HEIGHT), size_hint=(None,None)))
 
-    def create_exercise(self, instance):
-        self.manager.current = 'new exercise'
+        saveButton = Button(text="Save Timeline", size_hint=(0.2, 0.1), pos_hint={'center_x': 0.5})
+        saveButton.bind(on_press=self.saveTimeline)
+        add_widget(saveButton)
+    
+    def saveTimeline(self, instance):
+        updatedList=[]
+        for widget in self.root.ids.layout.children:
+            #Check if widget is of type draggable item and insert into list if true
+            #Important to insert at index 0, and not append, as layouts have a stack-like structure
+            if(str(type(widget))=="<class 'kivy.factory.MyDraggableItem'>"):
+                updatedList.insert(0, widget.text)
+        #Print the Updated List for Now, Can return list if needed
+        print(updatedList)
+        
 
-    def cancel(self, instance):
-        self.manager.current = 'home'
+if __name__ == '__main__':
+    EditTimeline().run()
