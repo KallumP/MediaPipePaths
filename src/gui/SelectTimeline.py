@@ -77,7 +77,7 @@ class SelectTimeline(Screen):
 
         self.fileType = pathJson.get("fileType")
         self.timeline = pathJson.get("timeline")
-        self.update_screen_with_timeline()
+        #self.update_screen_with_timeline()
         #except:
             #f = open("TimelineList.json", "w")
             #TimelineListContent = """{\n    "fileType": "timeline",\n    "timeline": [\n    ]\n}"""           
