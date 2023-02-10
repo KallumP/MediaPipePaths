@@ -57,9 +57,7 @@ class SelectTimeline(Screen):
     def list_timeline(self):
         if self.scrollview: self.remove_widget(self.scrollview) 
         
-        os.chdir('timelines')
         timelines = [f for f in listdir('.')]
-        os.chdir('..')
 
         button_area = GridLayout(cols=1, size_hint_y=None)
         button_area.bind(minimum_height=button_area.setter("height"))
@@ -78,23 +76,22 @@ class SelectTimeline(Screen):
         self.list_timeline()
 
     def open_timeline(self, instance):
-        os.chdir('timelines')
         os.chdir(instance.text)
-        self.read_timeline()
+        self.read_timeline(instance.text)
         self.manager.current = 'edit timeline'  
         
 
     def cancel_create(self, instance):
         self.manager.current = 'home'
 
-    def read_timeline(self):
+    def read_timeline(self, timelineName):
         #try:
         with open("TimelineList.json", 'r') as f:
             pathJson = json.load(f)
 
         self.fileType = pathJson.get("fileType")
         self.timeline = pathJson.get("timeline")
-        self.update_screen_with_timeline()
+        self.update_screen_with_timeline(timelineName)
         #except:
             #f = open("TimelineList.json", "w")
             #TimelineListContent = """{\n    "fileType": "timeline",\n    "timeline": [\n    ]\n}"""           
@@ -103,11 +100,12 @@ class SelectTimeline(Screen):
             #self.read_timeline()
 
     
-    def update_screen_with_timeline(self):
+    def update_screen_with_timeline(self, timelineName):
         Item = Factory.MyDraggableItem
         Item()
         editTimeline = self.manager.get_screen('edit timeline')
-        add_widget = editTimeline.l.ids.ReorderableLayout.add_widget
+        add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
 
+        editTimeline.title_text.text += timelineName
         for exercise in self.timeline:          
             add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size=(100, 100), size_hint=(None,None)))
