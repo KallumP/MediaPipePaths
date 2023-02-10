@@ -1,14 +1,5 @@
 {
     "fileType": "timeline",
     "timeline": [
-        {
-            "exercise": "Punch.json"
-        },
-        {
-            "exercise": "RaiseArm.json"
-        },
-        {
-            "exercise": "ParallelArms.json"
-        }
     ]
 }

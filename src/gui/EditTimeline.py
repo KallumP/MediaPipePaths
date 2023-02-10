@@ -1,8 +1,23 @@
+from imp import reload
+from re import L, template
+import re
+from turtle import onclick
+from kivy.app import App
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.screenmanager import ScreenManager, Screen
+
+import os
+import os.path
+from os import listdir
+from os.path import isfile, join
+import json
 from kivy.lang import Builder
 from kivy.factory import Factory
-from kivy.app import App
 import kivy_garden.draggable
-from kivy.uix.button import Button
 
 KV_CODE = '''
 <MyReorderableLayout@KXReorderableBehavior+StackLayout>:
@@ -23,7 +38,7 @@ KV_CODE = '''
             rectangle: [*self.pos, *self.size, ]
 ScrollView:
     MyReorderableLayout:
-        id: layout
+        id: ReorderableLayout
         size_hint_min: self.minimum_size
 '''
 
@@ -34,15 +49,23 @@ HEIGHT = 50
 #List for Testing - To remove and replace with Json list
 pyList = ['2', '3', '4', '5', '6']
 
-class EditTimeline(App):
-    def  build(self):
-        return Builder.load_string(KV_CODE)
+class ScreenManagement(ScreenManager):
+    def __init__(self, **kwargs):
+        super(ScreenManagement, self).__init__(**kwargs)
+
+class EditTimeline(Screen):
+    def __init__(self, **kwargs):
+        super(EditTimeline, self).__init__(**kwargs) 
+        self.l = Builder.load_string(KV_CODE)
+        self.on_start()
+
+        self.add_widget(self.l)
 
     def on_start(self):
         #Print statement - Debugging Purposes Only
         Item = Factory.MyDraggableItem
         Item()
-        add_widget = self.root.ids.layout.add_widget
+        add_widget = self.l.ids.ReorderableLayout.add_widget
 
         #Replace with Json list
         for i in pyList:
@@ -54,7 +77,7 @@ class EditTimeline(App):
     
     def saveTimeline(self, instance):
         updatedList=[]
-        for widget in self.root.ids.layout.children:
+        for widget in self.l.ids.ReorderableLayout.children:
             #Check if widget is of type draggable item and insert into list if true
             #Important to insert at index 0, and not append, as layouts have a stack-like structure
             if(str(type(widget))=="<class 'kivy.factory.MyDraggableItem'>"):
@@ -62,6 +85,3 @@ class EditTimeline(App):
         #Print the Updated List for Now, Can return list if needed
         print(updatedList)
         
-
-if __name__ == '__main__':
-    EditTimeline().run()
