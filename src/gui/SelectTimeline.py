@@ -71,19 +71,19 @@ class SelectTimeline(Screen):
         self.manager.current = 'home'
 
     def read_timeline(self):
-        try:
-            with open("TimelineList.json", 'r') as f:
-                pathJson = json.load(f)
+        #try:
+        with open("TimelineList.json", 'r') as f:
+            pathJson = json.load(f)
 
-            self.fileType = pathJson.get("fileType")
-            self.timeline = pathJson.get("timeline")
-            self.update_screen_with_timeline()
-        except:
-            f = open("TimelineList.json", "w")
-            TimelineListContent = """{\n    "fileType": "timeline",\n    "timeline": [\n    ]\n}"""           
-            f.write(TimelineListContent)
-            f.close()  
-            self.read_timeline()
+        self.fileType = pathJson.get("fileType")
+        self.timeline = pathJson.get("timeline")
+        self.update_screen_with_timeline()
+        #except:
+            #f = open("TimelineList.json", "w")
+            #TimelineListContent = """{\n    "fileType": "timeline",\n    "timeline": [\n    ]\n}"""           
+            #f.write(TimelineListContent)
+            #f.close()  
+            #self.read_timeline()
 
     
     def update_screen_with_timeline(self):
