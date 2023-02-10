@@ -47,7 +47,7 @@ WIDTH = 100
 HEIGHT = 50
 
 #List for Testing - To remove and replace with Json list
-pyList = ['2', '3', '4', '5', '6']
+#pyList = ['2', '3', '4', '5', '6']
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -67,8 +67,8 @@ class EditTimeline(Screen):
         add_widget = self.l.ids.ReorderableLayout.add_widget
 
         #Replace with Json list
-        for i in pyList:
-            add_widget(Item(text=str(i), size=(WIDTH, HEIGHT), size_hint=(None,None)))
+        #for i in pyList:
+            #add_widget(Item(text=str(i), size=(WIDTH, HEIGHT), size_hint=(None,None)))
 
         saveButton = Button(text="Save Timeline", size_hint=(0.2, 0.1), pos_hint={'center_x': 0.5})
         saveButton.bind(on_press=self.saveTimeline)

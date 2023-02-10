@@ -15,7 +15,23 @@ from os import listdir
 from os.path import isfile, join
 import json
 
+from kivy.lang import Builder
+from kivy.factory import Factory
+import kivy_garden.draggable
 
+KV_CODE = '''
+<MyDraggableItem@KXDraggableBehavior+Label>:
+    font_size: 30
+    text: root.text
+    drag_timeout: 0
+    drag_cls: 'test'
+    canvas.after:
+        Color:
+            rgba: .5, 1, 0, 1 if root.is_being_dragged else .5
+        Line:
+            width: 2 if root.is_being_dragged else 1
+            rectangle: [*self.pos, *self.size, ]
+'''
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -24,6 +40,7 @@ class ScreenManagement(ScreenManager):
 class SelectTimeline(Screen):
     def __init__(self, **kwargs):
         super(SelectTimeline, self).__init__(**kwargs) 
+        Builder.load_string(KV_CODE)
         self.layout = FloatLayout()
         self.scrollview = None
         
@@ -77,7 +94,7 @@ class SelectTimeline(Screen):
 
         self.fileType = pathJson.get("fileType")
         self.timeline = pathJson.get("timeline")
-        #self.update_screen_with_timeline()
+        self.update_screen_with_timeline()
         #except:
             #f = open("TimelineList.json", "w")
             #TimelineListContent = """{\n    "fileType": "timeline",\n    "timeline": [\n    ]\n}"""           
@@ -87,7 +104,10 @@ class SelectTimeline(Screen):
 
     
     def update_screen_with_timeline(self):
+        Item = Factory.MyDraggableItem
+        Item()
         editTimeline = self.manager.get_screen('edit timeline')
+        add_widget = editTimeline.l.ids.ReorderableLayout.add_widget
+
         for exercise in self.timeline:          
-            btn1 = Button(text=exercise.get("exercise").replace('.json', ''))
-            editTimeline.timeline_layout.add_widget(btn1)
+            add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size=(100, 100), size_hint=(None,None)))
