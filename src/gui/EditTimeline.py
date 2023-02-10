@@ -45,3 +45,16 @@ class EditTimeline(Screen):
         os.chdir('..')
         os.chdir('..')
         self.manager.current = 'home'
+
+
+    def update_timeline(self, instance):
+        self.instance.text
+        f = open("TimelineList.json", "w")
+        TimelineListStart = """{\n    "fileType": "timeline",\n    "timeline": [\n    """        
+        f.write(TimelineListStart)
+
+        #Write exercise here
+
+        TimelineListEnd = """]\n}"""  
+        f.write(TimelineListEnd) 
+        f.close()  
