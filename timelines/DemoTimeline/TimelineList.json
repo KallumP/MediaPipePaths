@@ -2,13 +2,13 @@
     "fileType": "timeline",
     "timeline": [
         {
+            "exercise": "Punch.json"
+        },
+        {
             "exercise": "ParallelArms.json"
         },
         {
             "exercise": "RaiseArm.json"
-        },
-        {
-            "exercise": "Punch.json"
         }
     ]
 }
