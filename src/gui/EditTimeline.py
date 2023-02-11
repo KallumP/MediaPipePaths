@@ -66,6 +66,10 @@ class EditTimeline(Screen):
 
         self.buttonLayout = BoxLayout(orientation='horizontal', spacing=10)
 
+        self.saveButton = Button(text="Save Timeline", size_hint=(0.4,0.3), pos_hint={'center_x': 0.5})
+        self.saveButton.bind(on_press=self.saveTimeline)
+        self.buttonLayout.add_widget(self.saveButton)
+
         self.addExercise_btn = Button(text="Add exercise", size_hint=(0.4,0.3), pos_hint={'center_x': 0.5})
         self.addExercise_btn.bind(on_press=self.add_exercise)
         self.buttonLayout.add_widget(self.addExercise_btn)
@@ -78,16 +82,16 @@ class EditTimeline(Screen):
         Item = Factory.MyDraggableItem
         Item()
         add_widget = self.exerciseLayout.ids.ReorderableLayout.add_widget
-
-        saveButton = Button(text="Save Timeline", size_hint=(0.2, 0.1), pos_hint={'center_x': 0.5})
-        saveButton.bind(on_press=self.saveTimeline)
-        add_widget(saveButton)
     
     def saveTimeline(self, instance):
         updatedList=[]
         for widget in self.exerciseLayout.ids.ReorderableLayout.children:
             if(str(type(widget))=="<class 'kivy.factory.MyDraggableItem'>"):
                 updatedList.insert(0, widget.text)
+
+        self.manager.current = 'home'
+
+        self.exerciseLayout.ids.ReorderableLayout.clear_widgets()
 
         f = open("TimelineList.json", "w")
         content = """{\n    "fileType": "timeline",\n    "timeline": [\n"""  
@@ -101,10 +105,7 @@ class EditTimeline(Screen):
         f.write(content) 
         f.close()  
 
-        for widget in self.exerciseLayout.ids.ReorderableLayout.children:
-            self.exerciseLayout.ids.ReorderableLayout.remove_widget(widget)
-
-        self.manager.current = 'home'
+        self.title_text.text = 'Edit timeline - '
 
         os.chdir('..')
 
@@ -114,6 +115,5 @@ class EditTimeline(Screen):
             if(str(type(widget))=="<class 'kivy.factory.MyDraggableItem'>"):
                 if widget.collide_point(*pos) and state_left >= 0:
                     print("add new button")
-
     def add_exercise(self, instance):
         self.manager.current = 'new exercise'
