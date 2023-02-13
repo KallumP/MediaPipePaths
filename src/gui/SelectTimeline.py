@@ -9,7 +9,6 @@ from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-from main import arrow
 from kivy.uix.image import Image
 
 import os
@@ -78,10 +77,10 @@ class SelectTimeline(Screen):
         if self.scrollview: self.layout.remove_widget(self.scrollview) 
         self.list_timeline()
 
-    def open_timeline(self, instance):
-        os.chdir(instance.text)
+    def open_timeline(self, instance):   
+        os.chdir(instance.text)     
         self.read_timeline(instance.text)
-        self.manager.current = 'edit timeline'  
+        self.manager.current = 'edit timeline' 
         
 
     def cancel_create(self, instance):
@@ -110,10 +109,11 @@ class SelectTimeline(Screen):
         add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
 
         editTimeline.title_text.text += timelineName
-
         
         for exercise in self.timeline:              
             add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
+            current_dir = os.getcwd()
+            os.chdir("../..")
             arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
-            #self.new_arrow = arrow
             add_widget(arrow)
+            os.chdir(current_dir)

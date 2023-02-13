@@ -22,7 +22,6 @@ import kivy_garden.draggable
 import win32api 
 from kivy.uix.label import Label
 
-
 KV_CODE = '''
 <MyReorderableLayout@KXReorderableBehavior+BoxLayout>:
     spacing: 10
@@ -126,5 +125,6 @@ class EditTimeline(Screen):
             if(str(type(widget))=="<class 'kivy.factory.MyDraggableItem'>"):
                 if widget.collide_point(*pos) and state_left >= 0:
                     print(widget.pos)
+                    
     def add_exercise(self, instance):
         self.manager.current = 'new exercise'
