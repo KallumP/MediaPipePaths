@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, FadeTransition
+from kivy.uix.image import Image
 
 import os
 #import src.helper
@@ -14,6 +15,8 @@ import src.gui.NewExercise
 import src.gui.EditExercise
 import src.gui.RecordFrame
 #from src.gui import
+
+arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5})   
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):

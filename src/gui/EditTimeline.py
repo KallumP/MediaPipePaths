@@ -54,27 +54,38 @@ class EditTimeline(Screen):
     def __init__(self, **kwargs):
         super(EditTimeline, self).__init__(**kwargs) 
         Window.bind(mouse_pos=self.on_mouseover)
-        self.layout = BoxLayout(orientation='vertical', spacing=10)
+        self.layout = BoxLayout(orientation='vertical')
 
+        self.bannerLayout = GridLayout(cols=2, size_hint=(1, 0.2))
         self.title_text = Label(text='Edit timeline - ', font_size = '50sp', markup=True)
-        self.layout.add_widget(self.title_text)
+        self.bannerLayout.add_widget(self.title_text)
+
+        self.buttonLayout = BoxLayout(orientation='vertical', size_hint_x = None, width = 100)
+
+        self.saveButton = Button(text="Save Timeline")
+        self.saveButton.bind(on_press=self.saveTimeline)
+        self.buttonLayout.add_widget(self.saveButton)
+
+        self.addExercise_btn = Button(text="Add exercise")
+        self.addExercise_btn.bind(on_press=self.add_exercise)
+        self.buttonLayout.add_widget(self.addExercise_btn)
+
+        self.bannerLayout.add_widget(self.buttonLayout)
+
+        self.layout.add_widget(self.bannerLayout)
+
+        #self.layout.add_widget(self.title_text)
+
+        self.content_layout = BoxLayout(orientation='horizontal', spacing=10)
 
         self.exerciseLayout = Builder.load_string(KV_CODE)
         self.on_start()
 
-        self.layout.add_widget(self.exerciseLayout)
+        self.content_layout.add_widget(self.exerciseLayout)
+        #self.layout.add_widget(self.exerciseLayout)
+        #self.layout.add_widget(self.buttonLayout)
 
-        self.buttonLayout = BoxLayout(orientation='horizontal', spacing=10)
-
-        self.saveButton = Button(text="Save Timeline", size_hint=(0.4,0.3), pos_hint={'center_x': 0.5})
-        self.saveButton.bind(on_press=self.saveTimeline)
-        self.buttonLayout.add_widget(self.saveButton)
-
-        self.addExercise_btn = Button(text="Add exercise", size_hint=(0.4,0.3), pos_hint={'center_x': 0.5})
-        self.addExercise_btn.bind(on_press=self.add_exercise)
-        self.buttonLayout.add_widget(self.addExercise_btn)
-
-        self.layout.add_widget(self.buttonLayout)
+        self.layout.add_widget(self.content_layout)
 
         self.add_widget(self.layout)
 
@@ -114,6 +125,6 @@ class EditTimeline(Screen):
         for widget in self.exerciseLayout.ids.ReorderableLayout.children:
             if(str(type(widget))=="<class 'kivy.factory.MyDraggableItem'>"):
                 if widget.collide_point(*pos) and state_left >= 0:
-                    print("add new button")
+                    print(widget.pos)
     def add_exercise(self, instance):
         self.manager.current = 'new exercise'

@@ -9,6 +9,9 @@ from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.screenmanager import ScreenManager, Screen
 
+from main import arrow
+from kivy.uix.image import Image
+
 import os
 import os.path
 from os import listdir
@@ -107,5 +110,10 @@ class SelectTimeline(Screen):
         add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
 
         editTimeline.title_text.text += timelineName
-        for exercise in self.timeline:          
-            add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size=(100, 100), size_hint=(None,None)))
+
+        
+        for exercise in self.timeline:              
+            add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
+            arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
+            #self.new_arrow = arrow
+            add_widget(arrow)
