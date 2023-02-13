@@ -107,5 +107,5 @@ class SelectTimeline(Screen):
         add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
 
         editTimeline.title_text.text += timelineName
-        for exercise in self.timeline:          
-            add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size=(100, 100), size_hint=(None,None)))
+        for exercise in self.timeline:
+            add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size=(180, 100), size_hint=(None,None)))

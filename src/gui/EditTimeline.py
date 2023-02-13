@@ -66,13 +66,19 @@ class EditTimeline(Screen):
 
         self.buttonLayout = BoxLayout(orientation='horizontal', spacing=10)
 
-        self.saveButton = Button(text="Save Timeline", size_hint=(0.4,0.3), pos_hint={'center_x': 0.5})
+        padding = Label(text="", font_size='10sp')
+        self.buttonLayout.add_widget(padding)
+
+        self.saveButton = Button(text="Save Timeline", size_hint=(1.0,0.3), pos_hint={'center_y': 0.6})
         self.saveButton.bind(on_press=self.saveTimeline)
         self.buttonLayout.add_widget(self.saveButton)
 
-        self.addExercise_btn = Button(text="Add exercise", size_hint=(0.4,0.3), pos_hint={'center_x': 0.5})
+        self.addExercise_btn = Button(text="Add exercise", size_hint=(1.0,0.3), pos_hint={'center_y': 0.6})
         self.addExercise_btn.bind(on_press=self.add_exercise)
         self.buttonLayout.add_widget(self.addExercise_btn)
+
+        padding = Label(text="", font_size='10sp')
+        self.buttonLayout.add_widget(padding)
 
         self.layout.add_widget(self.buttonLayout)
 
