@@ -23,7 +23,8 @@ import os.path
 from os import path
 
 import os
-import errno
+import json
+import re
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -59,17 +60,26 @@ class NewTimeline(Screen):
 
     def create_timeline(self, instance):
         new_timeline = self.timeline_name.text
-        os.chdir('timelines')
         path = os.path.join(os.getcwd(), new_timeline)
+
         if not os.path.exists(path):
             os.mkdir(path)
             os.chdir(path)
-            f = open("TimelineList.json", "w")
-            TimelineListContent = """{\n    "fileType": "timeline",\n    "timeline": [\n    ]\n}"""           
-            f.write(TimelineListContent)
-            f.close()   
 
-            self.timeline_name.text = ''                    
+            editTimeline = self.manager.get_screen('edit timeline')
+            editTimeline.title_text.text += self.timeline_name.text 
+
+            with open("TimelineList.json",'w') as file:
+            # First we load existing data into a dict.
+                content = { "fileType":"timeline",
+                            "timeline":[]}
+        
+                # Sets file's current position at offset.
+                file.seek(0)
+                # convert back to json.
+                json.dump(content, file, indent = 4)  
+
+            self.timeline_name.text = ''                   
             self.manager.current = 'edit timeline'                      
         else:
             self.warning_message.text = "A timeline with same name is already created"
