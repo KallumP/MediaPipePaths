@@ -16,6 +16,22 @@ import os.path
 from os import listdir
 from os.path import isfile, join
 import json
+from kivy.factory import Factory
+from kivy.uix.image import Image
+
+KV_CODE = '''
+<MyDraggableItem@KXDraggableBehavior+Label>:
+    font_size: 30
+    text: root.text
+    drag_timeout: 0
+    drag_cls: 'test'
+    canvas.after:
+        Color:
+            rgba: .5, 1, 0, 1 if root.is_being_dragged else .5
+        Line:
+            width: 2 if root.is_being_dragged else 1
+            rectangle: [*self.pos, *self.size, ]
+'''
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -57,6 +73,53 @@ class NewExercise(Screen):
         self.manager.get_screen('edit exercise').exercise_video_link = str(self.exercise_video_link.text)
         self.manager.current = 'edit exercise'
         self.manager.get_screen('edit exercise').refresh()
+        self.modify_timeline()
+        self.create_exercise_json()
+
+    def modify_timeline(self):
+        with open("TimelineList.json",'r+') as file:
+          # First we load existing data into a dict.
+            timeline_data = json.load(file)
+            
+            # python object to be appended
+            new_exercise = {"exercise": self.exercise_name.text+".json"}
+            
+            # appending the data
+            timeline_data["timeline"].append(new_exercise)
+            
+            # Sets file's current position at offset.
+            file.seek(0)
+            # convert back to json.
+            json.dump(timeline_data, file, indent = 4)
+
+    def create_exercise_json(self):
+        with open(self.exercise_name.text+".json",'w') as file:
+            # First we load existing data into a dict.
+            content = { "fileType":"body",
+                        "videoLink":self.exercise_video_link.text,
+                        "keyframes":[]}
+            
+            # Sets file's current position at offset.
+            file.seek(0)
+            # convert back to json.
+            json.dump(content, file, indent = 4)
 
     def cancel(self, instance):
-        self.manager.current = 'home'
+        with open("TimelineList.json", 'r') as f:
+            pathJson = json.load(f)
+        timeline = pathJson.get("timeline")
+
+        Item = Factory.MyDraggableItem
+        Item()
+        editTimeline = self.manager.get_screen('edit timeline')
+        add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
+        
+        for exercise in timeline:              
+            add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
+            current_dir = os.getcwd()
+            os.chdir("../..")
+            arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
+            add_widget(arrow)
+            os.chdir(current_dir)
+
+        self.manager.current = 'edit timeline'

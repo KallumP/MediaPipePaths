@@ -13,7 +13,7 @@ import src.gui.EditTimeline
 import src.gui.NewExercise
 import src.gui.EditExercise
 import src.gui.RecordFrame
-#from src.gui import
+#from src.gui import  
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):

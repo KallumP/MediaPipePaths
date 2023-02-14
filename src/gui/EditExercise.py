@@ -112,7 +112,7 @@ class EditExercise(Screen):
     def update(self, dt):
         # display image from cam in opencv window
         ret, frame = self.capture.read()
-        frame = cv2.resize(frame, (1280, 720))
+        #frame = cv2.resize(frame, (1280, 720))
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image.flags.writeable = False
         self.results = self.pose_model.process(image)
@@ -146,3 +146,20 @@ class EditExercise(Screen):
     
     def refresh(self):
         self.name_label.text = self.exercise_name
+
+    def update_exercise_json(self):
+        
+        with open(self.name_label.text + ".json",'r+') as file:
+          # First we load existing data into a dict.
+            exercise_data = json.load(file)
+            
+            # python object to be appended
+            #new_keyframe = {"exercise": self.exercise_name.text+".json"}
+            
+            # appending the data
+            #timeline_data["keyframes"].append(new_keyframe)
+            
+            # Sets file's current position at offset.
+            file.seek(0)
+            # convert back to json.
+            json.dump(exercise_data, file, indent = 4)

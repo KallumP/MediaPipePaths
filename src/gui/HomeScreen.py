@@ -38,9 +38,9 @@ class HomeScreen(Screen):
         viewTimeline_btn.bind(on_press=self.viewTimeline)
         layout.add_widget(viewTimeline_btn)
 
-        viewTimeline_btn = Button(text="New exercise", size_hint=(0.4,0.3), pos_hint={'center_x': 0.5})
-        viewTimeline_btn.bind(on_press=self.createNewExercise)
-        layout.add_widget(viewTimeline_btn)
+        #viewTimeline_btn = Button(text="New exercise", size_hint=(0.4,0.3), pos_hint={'center_x': 0.5})
+        #viewTimeline_btn.bind(on_press=self.createNewExercise)
+        #layout.add_widget(viewTimeline_btn)
 
         padding2 = Label(text='', font_size = '10sp')
         layout.add_widget(padding2)
