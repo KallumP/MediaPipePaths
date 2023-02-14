@@ -111,17 +111,17 @@ class EditTimeline(Screen):
 
         self.exerciseLayout.ids.ReorderableLayout.clear_widgets()
 
-        f = open("TimelineList.json", "w")
-        content = """{\n    "fileType": "timeline",\n    "timeline": [\n"""  
+        with open("TimelineList.json",'w') as file:
+            content = { "fileType":"timeline",
+                        "timeline":[]}
 
-        for exercise in updatedList:
-            content += """        {\n            "exercise": \"""" + exercise + """.json"\n        },\n"""
+            for exercise in updatedList:
+                content["timeline"].append({"exercise":exercise + ".json"})
 
-        content = content.rsplit(',', 1)[0]
-
-        content += """\n    ]\n}"""  
-        f.write(content) 
-        f.close()  
+            # Sets file's current position at offset.
+            file.seek(0)
+            # convert back to json.
+            json.dump(content, file, indent = 4) 
 
         self.title_text.text = 'Edit timeline - '
 
