@@ -112,7 +112,7 @@ class EditExercise(Screen):
     def update(self, dt):
         # display image from cam in opencv window
         ret, frame = self.capture.read()
-        frame = cv2.resize(frame, (1280, 720))
+        #frame = cv2.resize(frame, (1280, 720))
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image.flags.writeable = False
         self.results = self.pose_model.process(image)
