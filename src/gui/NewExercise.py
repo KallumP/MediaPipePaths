@@ -20,6 +20,8 @@ from kivy.factory import Factory
 from kivy.uix.image import Image
 from kivy.uix.popup import Popup
 
+import src.gui.EditExercise
+
 KV_CODE = '''
 <MyDraggableItem@KXDraggableBehavior+Label>:
     font_size: 30
@@ -86,7 +88,7 @@ class NewExercise(Screen):
 
             self.exercise_name.text = ""
             self.exercise_video_link.text = ""
-            self.repeat_times.text = ""
+            self.repeat_times.text = "1"
             
             self.manager.current = 'edit exercise'
             self.manager.get_screen('edit exercise').refresh()
@@ -111,20 +113,22 @@ class NewExercise(Screen):
             json.dump(timeline_data, file, indent = 4)
 
     def create_exercise_json(self):       
-        with open(self.exercise_name.text+".json",'w') as file:
+        #with open(self.exercise_name.text+".json",'w') as file:
             # First we load existing data into a dict.            
             
-            repeat_value = self.repeat_times.text                   
+        repeat_value = self.repeat_times.text                   
 
-            content = { "fileType":"body",
-                        "videoLink":self.exercise_video_link.text,
-                        "repeat": repeat_value,
-                        "keyframes":[]}
+        content = { "fileType":"body",
+                    "videoLink":self.exercise_video_link.text,
+                    "repeat": repeat_value,
+                    "keyframes":[]}
+        
+        src.gui.EditExercise.exercise_json_content = content
             
             # Sets file's current position at offset.
-            file.seek(0)
+            #file.seek(0)
             # convert back to json.
-            json.dump(content, file, indent = 4)
+            #json.dump(content, file, indent = 4)
         
 
     def cancel(self, instance):

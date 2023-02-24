@@ -12,7 +12,11 @@ from kivy.graphics import Ellipse, Color, Line
 import os
 from kivy.factory import Factory
 
+import src.helper
+
 key_frame_index_result = []
+
+exercise_json_content = {}
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -110,17 +114,28 @@ class EditExercise(Screen):
         return 1
     
     def next(self, instance):
-        return 1
+        #return 1
+        target_index = {"toTrack": [16,14,12]}
+        points = []
+        pointType = "triPointAngle"
+        angle = "145"
+        leniency = "20"
+        if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
+            point = {}
+            point["pointType"] = pointType
+            point["toTrack"] = target_index.get("toTrack")
+            if pointType == "triPointAngle":
+                point["angle"] = angle
+            point["leniency"] = leniency
+
+            points.append(point)
+
+        exercise_json_content["keyframes"].append({"points": points,"timeLimit" : "-1"})
 
     def complete(self, instance):
-        global key_frame_index_result
-
-        target_index = {"toTrack": [16,14,12]}
-
-        print()
-
-        #print(src.helper.CheckWithinFrame(target_index,key_frame_index_result))
-        #return 1
+        with open(self.exercise_name+".json",'w') as file:
+            file.seek(0)
+            json.dump(exercise_json_content, file, indent = 4)
 
     def cancel(self, instance):
         with open("TimelineList.json", 'r') as f:
