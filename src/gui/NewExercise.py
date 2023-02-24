@@ -18,6 +18,7 @@ from os.path import isfile, join
 import json
 from kivy.factory import Factory
 from kivy.uix.image import Image
+from kivy.uix.popup import Popup
 
 KV_CODE = '''
 <MyDraggableItem@KXDraggableBehavior+Label>:
@@ -36,6 +37,8 @@ KV_CODE = '''
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenManagement, self).__init__(**kwargs)
+
+    
 
 class NewExercise(Screen):
     def __init__(self, **kwargs):
@@ -58,7 +61,7 @@ class NewExercise(Screen):
 
         input_area.add_widget(Label(text='Repeat', font_size='20sp' ,size_hint=(1, 0.2)))
 
-        self.repeat_times = TextInput(text = '', font_size = '25sp', size_hint = (1, 0.3), multiline = False)
+        self.repeat_times = TextInput(text = '1', font_size = '25sp', size_hint = (1, 0.3), multiline = False)
         input_area.add_widget(self.repeat_times)
 
         self.layout.add_widget(input_area)
@@ -74,12 +77,22 @@ class NewExercise(Screen):
         self.add_widget(self.layout)
 
     def create_exercise(self, instance):
-        self.manager.get_screen('edit exercise').exercise_name = str(self.exercise_name.text)
-        self.manager.get_screen('edit exercise').exercise_video_link = str(self.exercise_video_link.text)
-        self.manager.current = 'edit exercise'
-        self.manager.get_screen('edit exercise').refresh()
-        self.modify_timeline()
-        self.create_exercise_json()
+        #not self.repeat_times.text.replace(".", "").isnumeric()
+        if self.repeat_times.text.isnumeric() and self.exercise_name.text != "":
+            self.modify_timeline()
+            self.create_exercise_json()
+            self.manager.get_screen('edit exercise').exercise_name = str(self.exercise_name.text)
+            self.manager.get_screen('edit exercise').exercise_video_link = str(self.exercise_video_link.text)
+
+            self.exercise_name.text = ""
+            self.exercise_video_link.text = ""
+            self.repeat_times.text = ""
+            
+            self.manager.current = 'edit exercise'
+            self.manager.get_screen('edit exercise').refresh()
+        else: 
+            self.call_pops()
+        
 
     def modify_timeline(self):
         with open("TimelineList.json",'r+') as file:
@@ -97,17 +110,22 @@ class NewExercise(Screen):
             # convert back to json.
             json.dump(timeline_data, file, indent = 4)
 
-    def create_exercise_json(self):
+    def create_exercise_json(self):       
         with open(self.exercise_name.text+".json",'w') as file:
-            # First we load existing data into a dict.
+            # First we load existing data into a dict.            
+            
+            repeat_value = self.repeat_times.text                   
+
             content = { "fileType":"body",
                         "videoLink":self.exercise_video_link.text,
+                        "repeat": repeat_value,
                         "keyframes":[]}
             
             # Sets file's current position at offset.
             file.seek(0)
             # convert back to json.
             json.dump(content, file, indent = 4)
+        
 
     def cancel(self, instance):
         with open("TimelineList.json", 'r') as f:
@@ -128,3 +146,14 @@ class NewExercise(Screen):
             os.chdir(current_dir)
 
         self.manager.current = 'edit timeline'
+
+    def call_pops(self):
+        # create content and add to the popup
+        content = Button(text='Invalid exercise name or repeat value')
+        popup = Popup(title = "Warning!", content=content, size_hint=(0.5,0.2), auto_dismiss=False)
+
+        # bind the on_press event of the button to the dismiss function
+        content.bind(on_press=popup.dismiss)
+
+        # open the popup
+        popup.open()

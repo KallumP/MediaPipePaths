@@ -12,6 +12,9 @@
         },
         {
             "exercise": "PullUp.json"
+        },
+        {
+            "exercise": "sadd.json"
         }
     ]
 }

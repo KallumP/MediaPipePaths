@@ -9,8 +9,8 @@ from kivy.uix.label import Label
 from kivy.uix.image import Image
 import json
 from kivy.graphics import Ellipse, Color, Line
-
-import src.helper
+import os
+from kivy.factory import Factory
 
 key_frame_index_result = []
 
@@ -115,15 +115,32 @@ class EditExercise(Screen):
     def complete(self, instance):
         global key_frame_index_result
 
-        target_index = [{12,14,16}]
+        target_index = {"toTrack": [16,14,12]}
 
-        print(key_frame_index_result)
+        print()
 
-        src.helper.CheckWithinFrame(target_index)
-        return 1
+        #print(src.helper.CheckWithinFrame(target_index,key_frame_index_result))
+        #return 1
 
     def cancel(self, instance):
-        self.manager.current = 'home'
+        with open("TimelineList.json", 'r') as f:
+            pathJson = json.load(f)
+        timeline = pathJson.get("timeline")
+
+        Item = Factory.MyDraggableItem
+        Item()
+        editTimeline = self.manager.get_screen('edit timeline')
+        add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
+        
+        for exercise in timeline:              
+            add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
+            current_dir = os.getcwd()
+            os.chdir("../..")
+            arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
+            add_widget(arrow)
+            os.chdir(current_dir)
+
+        self.manager.current = 'edit timeline'
     
     def refresh(self):
         self.name_label.text = self.exercise_name
