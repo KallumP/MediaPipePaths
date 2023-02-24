@@ -9,6 +9,10 @@ from kivy.uix.label import Label
 from kivy.uix.image import Image
 import json
 
+import src.helper
+
+key_frame_index_result = []
+
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenManagement, self).__init__(**kwargs)
@@ -101,6 +105,13 @@ class EditExercise(Screen):
         return 1
 
     def complete(self, instance):
+        global key_frame_index_result
+
+        target_index = [{12,14,16}]
+
+        print(key_frame_index_result)
+
+        src.helper.CheckWithinFrame(target_index)
         return 1
 
     def cancel(self, instance):

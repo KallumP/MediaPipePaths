@@ -1,6 +1,7 @@
 {
     "fileType": "body",
     "videoLink": "https://google.github.io/mediapipe/getting_started/python",
+    "repeat": 1,
     "keyframes": [
         { "points": [
                 {

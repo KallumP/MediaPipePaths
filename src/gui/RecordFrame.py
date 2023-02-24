@@ -16,6 +16,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 
+import src.gui.EditExercise
+
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenManagement, self).__init__(**kwargs)
@@ -70,7 +72,10 @@ class RecordFrame(Screen):
 
     def capture_image(self):
         self.update_event.cancel()
-        print(self.results.pose_landmarks)
+        #print(self.results.pose_landmarks)
+
+        src.gui.EditExercise.key_frame_index_result = self.results.pose_landmarks
+
         ret, capture_frame = self.capture.read()
         # Convert the image to a texture and display it in the Image widget
         image = cv2.cvtColor(capture_frame, cv2.COLOR_BGR2RGB)
