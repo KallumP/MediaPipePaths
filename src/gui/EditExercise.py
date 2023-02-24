@@ -1,24 +1,12 @@
-from imp import reload
-from re import L, template
-import re
 import mediapipe as mp
 from kivy.clock import Clock
 import cv2
-from kivy.graphics.texture import Texture
-from turtle import onclick
-from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-import os
 from kivy.uix.image import Image
-import os.path
-from os import listdir
-from os.path import isfile, join
 import json
 
 class ScreenManagement(ScreenManager):
@@ -57,17 +45,9 @@ class EditExercise(Screen):
 
         # this area is used to show gestures catched by camera
         image_area = BoxLayout()
-        self.img1=Image()
+        self.img1=Image(size=(400, 400), allow_stretch=True, keep_ratio=True)
         image_area.add_widget(self.img1)
         frame_area.add_widget(image_area)
-        #mediaPipe
-        self.mp_pose = mp.solutions.pose
-        self.pose_model = self.mp_pose.Pose()
-        self.mp_drawing = mp.solutions.drawing_utils
-        self.mp_drawing_styles = mp.solutions.drawing_styles
-        #opencv2 stuffs
-        self.capture = cv2.VideoCapture(0)
-        Clock.schedule_interval(self.update, 1.0/3000.0)
 
         record_frame_btn = Button(text="Record frame",size_hint=(0.5, 0.05),pos_hint={'center_x': 0.5})
         record_frame_btn.bind(on_press=self.record_frame)
@@ -78,6 +58,12 @@ class EditExercise(Screen):
         # edit area is used to edit exercise, like selecting points and indexes
         edit_area = BoxLayout(orientation = 'vertical', size_hint = (0.5, 1), pos_hint = {'center_y': 0.6, 'center_x': 0.5})
         edit_area.add_widget(Label(text='Select target index', font_size='30sp'))
+
+        # select area is used to select indexes
+        select_area = FloatLayout()
+
+        edit_area.add_widget(select_area)
+
         edit_area.add_widget(Label(text='Set leniency', font_size='30sp'))
 
         btn_box = BoxLayout(orientation = 'horizontal', size_hint = (0.8, 0.4), pos_hint = {'center_x': 0.5})
@@ -103,35 +89,11 @@ class EditExercise(Screen):
         cancel_btn.bind(on_press=self.cancel)
         self.layout.add_widget(cancel_btn)
 
-
         self.add_widget(self.layout)
 
     def record_frame(self, instance):
-        print(self.results.pose_landmarks)
-    
-    def update(self, dt):
-        # display image from cam in opencv window
-        ret, frame = self.capture.read()
-        #frame = cv2.resize(frame, (1280, 720))
-        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        image.flags.writeable = False
-        self.results = self.pose_model.process(image)
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        # draws the body
-        self.mp_drawing.draw_landmarks(
-            image,
-            self.results.pose_landmarks,
-            self.mp_pose.POSE_CONNECTIONS,
-            landmark_drawing_spec=self.mp_drawing_styles.get_default_pose_landmarks_style())
-        image = cv2.flip(image, 1)
-        # convert it to texture
-        buf1 = cv2.flip(image, 0)
-        buf = buf1.tostring()
-        texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')  
-        texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-        # display image from the texture
-        self.img1.texture = texture1
-
+        self.manager.current = 'record frame'
+        
     def reset(self, instance):
         return 1
     
