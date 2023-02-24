@@ -56,6 +56,11 @@ class NewExercise(Screen):
         self.exercise_video_link = TextInput(text = '', font_size = '25sp', size_hint = (1, 0.3), multiline = False)
         input_area.add_widget(self.exercise_video_link)
 
+        input_area.add_widget(Label(text='Repeat', font_size='20sp' ,size_hint=(1, 0.2)))
+
+        self.repeat_times = TextInput(text = '', font_size = '25sp', size_hint = (1, 0.3), multiline = False)
+        input_area.add_widget(self.repeat_times)
+
         self.layout.add_widget(input_area)
         
         add_exercise_btn = Button(text="New exercise",size_hint=(0.5, 0.08),pos_hint={'center_y': 0.2, 'center_x': 0.5})

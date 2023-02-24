@@ -8,6 +8,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 import json
+from kivy.graphics import Ellipse, Color, Line
 
 import src.helper
 
@@ -63,8 +64,15 @@ class EditExercise(Screen):
         edit_area = BoxLayout(orientation = 'vertical', size_hint = (0.5, 1), pos_hint = {'center_y': 0.6, 'center_x': 0.5})
         edit_area.add_widget(Label(text='Select target index', font_size='30sp'))
 
-        # select area is used to select indexes
+        # # select area is used to select indexes
         select_area = FloatLayout()
+        with select_area.canvas:
+            Color(1, 1, 1)  # set color to white
+            Line(circle=(select_area.width/2, select_area.height/2, min(select_area.width, select_area.height)/2), width=2)  # draw a border around the circle
+            Ellipse(pos=(select_area.width/2 - min(select_area.width, select_area.height)/2, 
+            select_area.height/2 - min(select_area.width, select_area.height)/2), 
+            size=(min(select_area.width, select_area.height), min(select_area.width, select_area.height)), 
+            angle_end=360)  # draw an empty circle
 
         edit_area.add_widget(select_area)
 
