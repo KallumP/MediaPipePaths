@@ -114,25 +114,12 @@ class EditExercise(Screen):
         return 1
     
     def next(self, instance):
+        self.update_exercise_json()
         #return 1
-        target_index = {"toTrack": [16,14,12]}
-        points = []
-        pointType = "triPointAngle"
-        angle = "145"
-        leniency = "20"
-        if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
-            point = {}
-            point["pointType"] = pointType
-            point["toTrack"] = target_index.get("toTrack")
-            if pointType == "triPointAngle":
-                point["angle"] = angle
-            point["leniency"] = leniency
-
-            points.append(point)
-
-        exercise_json_content["keyframes"].append({"points": points,"timeLimit" : "-1"})
+        
 
     def complete(self, instance):
+        #Create exercise json
         with open(self.exercise_name+".json",'w') as file:
             file.seek(0)
             json.dump(exercise_json_content, file, indent = 4)
@@ -160,19 +147,20 @@ class EditExercise(Screen):
     def refresh(self):
         self.name_label.text = self.exercise_name
 
-    def update_exercise_json(self):
-        
-        with open(self.name_label.text + ".json",'r+') as file:
-          # First we load existing data into a dict.
-            exercise_data = json.load(file)
-            
-            # python object to be appended
-            #new_keyframe = {"exercise": self.exercise_name.text+".json"}
-            
-            # appending the data
-            #timeline_data["keyframes"].append(new_keyframe)
-            
-            # Sets file's current position at offset.
-            file.seek(0)
-            # convert back to json.
-            json.dump(exercise_data, file, indent = 4)
+    def update_exercise_json(self):      
+        target_index = {"toTrack": [16,14,12]}
+        points = []
+        pointType = "triPointAngle"
+        angle = "145"
+        leniency = "20"
+        if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
+            point = {}
+            point["pointType"] = pointType
+            point["toTrack"] = target_index.get("toTrack")
+            if pointType == "triPointAngle":
+                point["angle"] = angle
+            point["leniency"] = leniency
+
+            points.append(point)
+
+        exercise_json_content["keyframes"].append({"points": points,"timeLimit" : "-1"})
