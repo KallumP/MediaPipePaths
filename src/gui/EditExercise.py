@@ -38,7 +38,7 @@ class EditExercise(Screen):
 
         super(EditExercise, self).__init__(**kwargs) 
 
-        self.exercise_name = "punch"
+        self.exercise_name = ""
         self.exercise_video_link = ""
         self.frame_index = 0
 
@@ -317,12 +317,16 @@ class EditExercise(Screen):
         with open(self.exercise_name+".json",'w') as file:
             file.seek(0)
             json.dump(exercise_json_content, file, indent = 4)
-        with open("TimelineList.json", 'r') as f:
+            file.close()
+        with open("TimelineList.json", 'r') as file:
             timeline_data = json.load(file)
-            new_exercise = {"exercise": self.exercise_name.text+".json"}
+            new_exercise = {"exercise": self.name_label.text+".json"}
             timeline_data["timeline"].append(new_exercise)
+            file.close()
+        with open("TimelineList.json", 'w') as file:
             file.seek(0)
             json.dump(timeline_data, file, indent = 4)
+            file.close()
 
         timeline = timeline_data.get("timeline")
 
