@@ -21,10 +21,13 @@ from kivy.uix.widget import Widget
 from kivy.uix.slider import Slider
 from kivy.uix.textinput import TextInput
 from kivy.uix.dropdown import DropDown
+from kivy.uix.popup import Popup
 
 key_frame_index_result = []
 
 exercise_json_content = {}
+
+frame_points = []
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -174,8 +177,8 @@ class EditExercise(Screen):
         pointtype.add_widget(Label(text='Point Type',
                               font_size='15sp')) 
 
-        typeList = ['triPointAngle', 'None', 'pointPosition', 'parallelPosition', 'abovePosition']
-        self.dropdownbutton = Button(text='Select parameter')
+        typeList = ['None','triPointAngle' , 'pointPosition', 'parallelPosition', 'abovePosition']
+        self.dropdownbutton = Button(text='Choose a point type')
         pointtype.add_widget(self.dropdownbutton)
         self.dropdown = DropDown()
         self.dropdownbutton.bind(on_release=self.dropdown.open)
@@ -185,24 +188,13 @@ class EditExercise(Screen):
                 self.dropdown.add_widget(btn)
         self.dropdown.bind(on_select=lambda instance, x: setattr(self.dropdownbutton, 'text', x))
 
-        """dropdown = DropDown()
-        typeList = ['triPointAngle', 'None', 'pointPosition', 'parallelPosition', 'abovePosition']
-        for index in range(len(typeList)):
-            btn = Button(text=typeList[index], size_hint_y=None, height=44)
-            btn.bind(on_release=lambda btn: dropdown.select(btn.text))
-            dropdown.add_widget(btn)
-        self.mainbutton = Button(text='Click to Choose Type')
-        pointtype.add_widget(self.mainbutton)
-        self.mainbutton.bind(on_release=dropdown.open)
-        dropdown.bind(on_select=lambda instance, x: setattr(self.mainbutton, 'text', x))"""
-
         leniency = BoxLayout(orientation='vertical')
         select_box.add_widget(leniency)
         leniency.add_widget(Label(text='Leniency',
                               font_size='15sp'))
         self.leniency_value = Label(text='0.0', font_size='15sp')
         leniency.add_widget(self.leniency_value)
-        self.slider = Slider(min=0, max=2, value=0)
+        self.slider = Slider(min=0, max=1, value=0)
         self.slider.bind(on_touch_move=self.move_slider)
         leniency.add_widget(self.slider)
 
@@ -244,14 +236,73 @@ class EditExercise(Screen):
         self.leniency_value.text = str(round(self.slider.value, 2))
 
     def ok(self, instance):
+        point = {}
+
         # indexes
-        print(self.index_input1.text)
-        # time limit
-        print(self.index_input2.text)
-        # point type
-        print(self.dropdownbutton.text)
-        # leniency
-        print(round(self.slider.value, 2))
+        split_index = self.index_input1.text.split()    
+        final_index = []
+        for x in split_index:
+            x = x.replace('\n', '')
+            x = x.replace(';', '')
+            final_index.append(int(x))
+        #point["toTrack"] = final_index
+        target_index = {"toTrack": final_index}
+
+        #try:
+        if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
+            #Targeted index in frame
+            #Pointtpe is triPointAngle
+            if self.dropdownbutton.text == 'triPointAngle':
+                if len(final_index) != 3:
+                    self.call_pops()
+                    self.pop_content.text = 'Only 3 index should be selected'
+                else:
+                    target = src.helper.WithinAngle(target_index,key_frame_index_result.landmark)
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["angle"] = target
+                    point["leniency"] = target*round(self.slider.value, 2)
+                    frame_points.append(point)
+            #Pointtpe is triPointAngle
+            elif self.dropdownbutton.text == 'pointPosition':
+                if len(final_index) != 1:
+                    self.call_pops()
+                    self.pop_content.text = 'Only 1 index should be selected'
+                else:
+                    target = src.helper.WithinTarget(target_index,key_frame_index_result.landmark)
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["target"] = target
+                    point["leniency"] = target*round(self.slider.value, 2)
+                    frame_points.append(point)
+            #Pointtpe is parallelPosition
+            elif self.dropdownbutton.text == 'parallelPosition':
+                if len(final_index) != 4:
+                    self.call_pops()
+                    self.pop_content.text = 'Only 4 index should be selected'
+                else:
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["leniency"] = round(self.slider.value, 2)
+                    frame_points.append(point)
+            #Pointtpe is abovePosition
+            elif self.dropdownbutton.text == 'abovePosition':
+                if len(final_index) != 2:
+                    self.call_pops()
+                    self.pop_content.text = 'Only 2 index should be selected'
+                else:
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["leniency"] = round(self.slider.value, 2)
+                    frame_points.append(point)
+        #Targeted index out of frame
+        else:
+            self.call_pops()
+            self.pop_content.text = 'Targeted index out of frame'
+        # No recording 
+        #except:
+            #self.call_pops()
+            #self.pop_content.text = 'No exercise recorded'
     
     def reset(self, instance):
         return 1
@@ -263,9 +314,26 @@ class EditExercise(Screen):
 
     def complete(self, instance):
         #Create exercise json
-        """with open(self.exercise_name+".json",'w') as file:
+        with open(self.exercise_name+".json",'w') as file:
             file.seek(0)
-            json.dump(exercise_json_content, file, indent = 4)"""
+            json.dump(exercise_json_content, file, indent = 4)
+        with open("TimelineList.json", 'r') as f:
+            pathJson = json.load(f)
+
+        timeline = pathJson.get("timeline")
+
+        Item = Factory.MyDraggableItem
+        Item()
+        editTimeline = self.manager.get_screen('edit timeline')
+        add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
+        
+        for exercise in timeline:              
+            add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
+            current_dir = os.getcwd()
+            os.chdir("../..")
+            arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
+            add_widget(arrow)
+            os.chdir(current_dir)
         self.manager.current = 'edit timeline' 
 
     def cancel(self, instance):
@@ -292,19 +360,16 @@ class EditExercise(Screen):
         self.name_label.text = self.exercise_name
 
     def update_exercise_json(self):      
-        target_index = {"toTrack": [16,14,12]}
-        points = []
-        pointType = "triPointAngle"
-        angle = "145"
-        leniency = "20"
-        if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
-            point = {}
-            point["pointType"] = pointType
-            point["toTrack"] = target_index.get("toTrack")
-            if pointType == "triPointAngle":
-                point["angle"] = angle
-            point["leniency"] = leniency
+        exercise_json_content["keyframes"].append({"points": frame_points,"timeLimit" : self.index_input2.text})
+        #print(exercise_json_content)
 
-            points.append(point)
+    def call_pops(self):
+        # create content and add to the popup
+        self.pop_content = Button(text='')
+        popup = Popup(title = "Warning!", content=self.pop_content, size_hint=(0.5,0.2), auto_dismiss=False)
 
-        exercise_json_content["keyframes"].append({"points": points,"timeLimit" : "-1"})
+        # bind the on_press event of the button to the dismiss function
+        self.pop_content.bind(on_press=popup.dismiss)
+
+        # open the popup
+        popup.open()

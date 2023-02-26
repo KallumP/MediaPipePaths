@@ -35,11 +35,9 @@ def GetAngleLengths(a, b, c):
 
 
 # returns if the user's points are within the target angle
-def WithinAngle(index, point, results):
+def WithinAngle(point, results):
     #if CheckWithinFrame(point, results):
     toTrack = point.get("toTrack")
-    targetAngle = point.get("angle")
-    leniency = point.get("leniency")
 
     # different points to track
     start = [results[toTrack[0]].x, results[toTrack[0]].y]
@@ -56,20 +54,20 @@ def WithinAngle(index, point, results):
 
 
 # checks if a user's index is within a target position
-def WithinTarget(index, point, results):
+def WithinTarget(point, results):
     #if CheckWithinFrame(point, results):
     toTrack = point.get("toTrack")
-    leniency = point.get("leniency")
-    targetPosition = [point.get("target")[0], point.get("target")[1]]
+    #leniency = point.get("leniency")
+    #targetPosition = [point.get("target")[0], point.get("target")[1]]
 
     # gets the point of the index to be tracked
     indexPosition = [results[toTrack[0]].x, results[toTrack[0]].y]
-    distance = GetDistance(indexPosition, targetPosition)
+    #distance = GetDistance(indexPosition, targetPosition)
 
         #if distance < leniency:
             #return True     
     #return False
-    return distance
+    return indexPosition
 
 # checks if an index is above another index
 # Not needed for admin ?
