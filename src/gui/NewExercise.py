@@ -143,11 +143,6 @@ class NewExercise(Screen):
         
         for exercise in timeline:              
             add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
-            current_dir = os.getcwd()
-            os.chdir("../..")
-            arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
-            add_widget(arrow)
-            os.chdir(current_dir)
 
         self.manager.current = 'edit timeline'
 

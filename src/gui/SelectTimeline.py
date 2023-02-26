@@ -22,17 +22,28 @@ from kivy.factory import Factory
 import kivy_garden.draggable
 
 KV_CODE = '''
-<MyDraggableItem@KXDraggableBehavior+Label>:
-    font_size: 30
-    text: root.text
+<MyDraggableItem@KXDraggableBehavior+BoxLayout>:
+    orientation: 'vertical'
+    size_hint_y: None
     drag_timeout: 0
     drag_cls: 'test'
+    text: ''
     canvas.after:
         Color:
-            rgba: .5, 1, 0, 1 if root.is_being_dragged else .5
+            rgba: .5,1,0,1 if root.is_being_dragged else .5
         Line:
             width: 2 if root.is_being_dragged else 1
             rectangle: [*self.pos, *self.size, ]
+    Label:
+        text: root.text
+        font_size: 30
+    BoxLayout:
+        orientation: 'horizontal'
+        Button:
+            text: 'Edit'
+        Button:
+            text: 'Delete'
+
 '''
 
 class ScreenManagement(ScreenManager):
@@ -110,10 +121,5 @@ class SelectTimeline(Screen):
 
         editTimeline.title_text.text += timelineName
         
-        for exercise in self.timeline:              
+        for exercise in self.timeline:
             add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
-            current_dir = os.getcwd()
-            os.chdir("../..")
-            arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
-            add_widget(arrow)
-            os.chdir(current_dir)
