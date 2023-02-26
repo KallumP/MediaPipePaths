@@ -1,22 +1,21 @@
 {
     "fileType": "body",
-    "videoLink": "",
-    "repeat": "1",
+    "videoLink": "https://google.github.io/mediapipe/",
     "keyframes": [
         {
             "points": [
                 {
-                    "pointType": "triPointAngle",
+                    "pointType": "parallelLines",
                     "toTrack": [
                         16,
                         14,
-                        12
+                        13,
+                        15
                     ],
-                    "angle": "145",
-                    "leniency": "20"
+                    "leniency": 1
                 }
             ],
-            "timeLimit": "-1"
+            "timeLimit": -1
         }
     ]
 }

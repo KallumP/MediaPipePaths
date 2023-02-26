@@ -53,8 +53,9 @@ class EditExercise(Screen):
                              pos_hint={'top':1})
         self.root.add_widget(top_area)
         # show the exercise name
-        top_area.add_widget(Label(text=self.exercise_name, 
-                                  font_size='30sp'))
+        self.name_label = Label(text=self.exercise_name, 
+                                  font_size='30sp')
+        top_area.add_widget(self.name_label)
         # show the frame index
         top_area.add_widget(Label(text='Current frame:' + str(self.frame_index), 
                                   font_size='30sp'))
@@ -171,8 +172,20 @@ class EditExercise(Screen):
         pointtype = BoxLayout(orientation='vertical')
         select_box.add_widget(pointtype)
         pointtype.add_widget(Label(text='Point Type',
-                              font_size='15sp'))
-        dropdown = DropDown()
+                              font_size='15sp')) 
+
+        typeList = ['triPointAngle', 'None', 'pointPosition', 'parallelPosition', 'abovePosition']
+        self.dropdownbutton = Button(text='Select parameter')
+        pointtype.add_widget(self.dropdownbutton)
+        self.dropdown = DropDown()
+        self.dropdownbutton.bind(on_release=self.dropdown.open)
+        for x in range(len(typeList)):
+                btn = Button(text=typeList[x].strip(), size_hint_y=None, height=44)
+                btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
+                self.dropdown.add_widget(btn)
+        self.dropdown.bind(on_select=lambda instance, x: setattr(self.dropdownbutton, 'text', x))
+
+        """dropdown = DropDown()
         typeList = ['triPointAngle', 'None', 'pointPosition', 'parallelPosition', 'abovePosition']
         for index in range(len(typeList)):
             btn = Button(text=typeList[index], size_hint_y=None, height=44)
@@ -181,7 +194,7 @@ class EditExercise(Screen):
         self.mainbutton = Button(text='Click to Choose Type')
         pointtype.add_widget(self.mainbutton)
         self.mainbutton.bind(on_release=dropdown.open)
-        dropdown.bind(on_select=lambda instance, x: setattr(self.mainbutton, 'text', x))
+        dropdown.bind(on_select=lambda instance, x: setattr(self.mainbutton, 'text', x))"""
 
         leniency = BoxLayout(orientation='vertical')
         select_box.add_widget(leniency)
@@ -217,6 +230,8 @@ class EditExercise(Screen):
         complete_btn.bind(on_press=self.complete)
         btn_box.add_widget(complete_btn)
         
+    def edit_relationship(self, instance):
+        self.dropdownbutton.text = instance.text
 
     def setter(self, window, width, height):
         self.root.width = width
@@ -234,7 +249,7 @@ class EditExercise(Screen):
         # time limit
         print(self.index_input2.text)
         # point type
-        print(self.mainbutton.text)
+        print(self.dropdownbutton.text)
         # leniency
         print(round(self.slider.value, 2))
     
@@ -248,9 +263,10 @@ class EditExercise(Screen):
 
     def complete(self, instance):
         #Create exercise json
-        with open(self.exercise_name+".json",'w') as file:
+        """with open(self.exercise_name+".json",'w') as file:
             file.seek(0)
-            json.dump(exercise_json_content, file, indent = 4)
+            json.dump(exercise_json_content, file, indent = 4)"""
+        self.manager.current = 'edit timeline' 
 
     def cancel(self, instance):
         with open("TimelineList.json", 'r') as f:
