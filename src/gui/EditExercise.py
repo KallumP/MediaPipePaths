@@ -248,61 +248,61 @@ class EditExercise(Screen):
         #point["toTrack"] = final_index
         target_index = {"toTrack": final_index}
 
-        #try:
-        if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
-            #Targeted index in frame
-            #Pointtpe is triPointAngle
-            if self.dropdownbutton.text == 'triPointAngle':
-                if len(final_index) != 3:
-                    self.call_pops()
-                    self.pop_content.text = 'Only 3 index should be selected'
-                else:
-                    target = src.helper.WithinAngle(target_index,key_frame_index_result.landmark)
-                    point["pointType"] = self.dropdownbutton.text
-                    point["toTrack"] = final_index
-                    point["angle"] = target
-                    point["leniency"] = target*round(self.slider.value, 2)
-                    frame_points.append(point)
-            #Pointtpe is triPointAngle
-            elif self.dropdownbutton.text == 'pointPosition':
-                if len(final_index) != 1:
-                    self.call_pops()
-                    self.pop_content.text = 'Only 1 index should be selected'
-                else:
-                    target = src.helper.WithinTarget(target_index,key_frame_index_result.landmark)
-                    point["pointType"] = self.dropdownbutton.text
-                    point["toTrack"] = final_index
-                    point["target"] = target
-                    point["leniency"] = target*round(self.slider.value, 2)
-                    frame_points.append(point)
-            #Pointtpe is parallelPosition
-            elif self.dropdownbutton.text == 'parallelPosition':
-                if len(final_index) != 4:
-                    self.call_pops()
-                    self.pop_content.text = 'Only 4 index should be selected'
-                else:
-                    point["pointType"] = self.dropdownbutton.text
-                    point["toTrack"] = final_index
-                    point["leniency"] = round(self.slider.value, 2)
-                    frame_points.append(point)
-            #Pointtpe is abovePosition
-            elif self.dropdownbutton.text == 'abovePosition':
-                if len(final_index) != 2:
-                    self.call_pops()
-                    self.pop_content.text = 'Only 2 index should be selected'
-                else:
-                    point["pointType"] = self.dropdownbutton.text
-                    point["toTrack"] = final_index
-                    point["leniency"] = round(self.slider.value, 2)
-                    frame_points.append(point)
-        #Targeted index out of frame
-        else:
-            self.call_pops()
-            self.pop_content.text = 'Targeted index out of frame'
+        try:
+            if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
+                #Targeted index in frame
+                #Pointtpe is triPointAngle
+                if self.dropdownbutton.text == 'triPointAngle':
+                    if len(final_index) != 3:
+                        self.call_pops()
+                        self.pop_content.text = 'Only 3 index should be selected'
+                    else:
+                        target = src.helper.WithinAngle(target_index,key_frame_index_result.landmark)
+                        point["pointType"] = self.dropdownbutton.text
+                        point["toTrack"] = final_index
+                        point["angle"] = target
+                        point["leniency"] = target*round(self.slider.value, 2)
+                        frame_points.append(point)
+                #Pointtpe is triPointAngle
+                elif self.dropdownbutton.text == 'pointPosition':
+                    if len(final_index) != 1:
+                        self.call_pops()
+                        self.pop_content.text = 'Only 1 index should be selected'
+                    else:
+                        target = src.helper.WithinTarget(target_index,key_frame_index_result.landmark)
+                        point["pointType"] = self.dropdownbutton.text
+                        point["toTrack"] = final_index
+                        point["target"] = target
+                        point["leniency"] = target*round(self.slider.value, 2)
+                        frame_points.append(point)
+                #Pointtpe is parallelPosition
+                elif self.dropdownbutton.text == 'parallelPosition':
+                    if len(final_index) != 4:
+                        self.call_pops()
+                        self.pop_content.text = 'Only 4 index should be selected'
+                    else:
+                        point["pointType"] = self.dropdownbutton.text
+                        point["toTrack"] = final_index
+                        point["leniency"] = round(self.slider.value, 2)
+                        frame_points.append(point)
+                #Pointtpe is abovePosition
+                elif self.dropdownbutton.text == 'abovePosition':
+                    if len(final_index) != 2:
+                        self.call_pops()
+                        self.pop_content.text = 'Only 2 index should be selected'
+                    else:
+                        point["pointType"] = self.dropdownbutton.text
+                        point["toTrack"] = final_index
+                        point["leniency"] = round(self.slider.value, 2)
+                        frame_points.append(point)
+            #Targeted index out of frame
+            else:
+                self.call_pops()
+                self.pop_content.text = 'Targeted index out of frame'
         # No recording 
-        #except:
-            #self.call_pops()
-            #self.pop_content.text = 'No exercise recorded'
+        except:
+            self.call_pops()
+            self.pop_content.text = 'No exercise recorded'
     
     def reset(self, instance):
         return 1
@@ -318,9 +318,13 @@ class EditExercise(Screen):
             file.seek(0)
             json.dump(exercise_json_content, file, indent = 4)
         with open("TimelineList.json", 'r') as f:
-            pathJson = json.load(f)
+            timeline_data = json.load(file)
+            new_exercise = {"exercise": self.exercise_name.text+".json"}
+            timeline_data["timeline"].append(new_exercise)
+            file.seek(0)
+            json.dump(timeline_data, file, indent = 4)
 
-        timeline = pathJson.get("timeline")
+        timeline = timeline_data.get("timeline")
 
         Item = Factory.MyDraggableItem
         Item()
@@ -339,6 +343,7 @@ class EditExercise(Screen):
     def cancel(self, instance):
         with open("TimelineList.json", 'r') as f:
             pathJson = json.load(f)
+
         timeline = pathJson.get("timeline")
 
         Item = Factory.MyDraggableItem
