@@ -23,13 +23,14 @@ class Application(App):
     def build(self):
         os.chdir('timelines')
         sm = ScreenManagement(transition=FadeTransition())
-        sm.add_widget(src.gui.HomeScreen.HomeScreen(name='home'))
-        sm.add_widget(src.gui.SelectTimeline.SelectTimeline(name='select timeline'))
-        sm.add_widget(src.gui.NewTimeline.NewTimeline(name='new timeline'))
-        sm.add_widget(src.gui.EditTimeline.EditTimeline(name='edit timeline'))
-        sm.add_widget(src.gui.NewExercise.NewExercise(name='new exercise'))
         sm.add_widget(src.gui.EditExercise.EditExercise(name='edit exercise'))
-        sm.add_widget(src.gui.RecordFrame.RecordFrame(name='record frame'))
+        # sm.add_widget(src.gui.HomeScreen.HomeScreen(name='home'))
+        # sm.add_widget(src.gui.SelectTimeline.SelectTimeline(name='select timeline'))
+        # sm.add_widget(src.gui.NewTimeline.NewTimeline(name='new timeline'))
+        # sm.add_widget(src.gui.EditTimeline.EditTimeline(name='edit timeline'))
+        # sm.add_widget(src.gui.NewExercise.NewExercise(name='new exercise'))
+        # # sm.add_widget(src.gui.EditExercise.EditExercise(name='edit exercise'))
+        # sm.add_widget(src.gui.RecordFrame.RecordFrame(name='record frame'))
         
         return sm
 
