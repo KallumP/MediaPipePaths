@@ -3,6 +3,9 @@
     "timeline": [
         {
             "exercise": "e1.json"
+        },
+        {
+            "exercise": "e2.json"
         }
     ]
 }
