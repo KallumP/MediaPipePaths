@@ -51,6 +51,8 @@ def TrackKeyframe(index, keyframes):
     global prevKeyFrameTime
     global gestureDetectionCount
 
+    print(results.pose_landmarks.landmark)
+
     keyframe = keyframes[index]
     points = keyframe.get("points")
     timeLimit = keyframe.get("timeLimit")

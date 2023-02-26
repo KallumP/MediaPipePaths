@@ -58,7 +58,7 @@ class EditTimeline(Screen):
 
         self.layout = BoxLayout(orientation='vertical')  
 
-        self.bannerLayout = GridLayout(cols=2, size_hint=(1, 0.2))
+        self.bannerLayout = GridLayout(cols=2, size_hint=(1, 0.4))
         self.title_text = Label(text='Edit timeline - ', font_size = '50sp', markup=True)
         self.bannerLayout.add_widget(self.title_text)
 
@@ -81,7 +81,7 @@ class EditTimeline(Screen):
         current_dir = os.getcwd()
         print(current_dir)
         os.chdir("..")
-        arrow = Image(source = 'graphics/longWhiteArrow.png', size_hint_x=0.7, pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
+        arrow = Image(source = 'graphics/longWhiteArrow.png', size_hint_x=0.5, pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
         self.layout.add_widget(arrow)
         os.chdir(current_dir)
 
