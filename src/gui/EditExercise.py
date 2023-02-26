@@ -146,15 +146,15 @@ class EditExercise(Screen):
         input_box.add_widget(box1)
         box1.add_widget(Label(text='Indexes',
                               font_size='15sp'))
-        index_input1 = TextInput(text = '', font_size = '15sp', multiline = True)
-        box1.add_widget(index_input1)
+        self.index_input1 = TextInput(text = '', font_size = '15sp', multiline = True)
+        box1.add_widget(self.index_input1)
 
         box2 = BoxLayout(orientation='vertical')
         input_box.add_widget(box2)
         box2.add_widget(Label(text='Time Limit',
                               font_size='15sp'))
-        index_input2 = TextInput(text = '', font_size = '15sp', multiline = True)
-        box2.add_widget(index_input2)
+        self.index_input2 = TextInput(text = '', font_size = '15sp', multiline = True)
+        box2.add_widget(self.index_input2)
 
         select_box = BoxLayout(orientation='horizontal')
         right_side.add_widget(select_box)
@@ -168,17 +168,20 @@ class EditExercise(Screen):
             btn = Button(text=typeList[index], size_hint_y=None, height=44)
             btn.bind(on_release=lambda btn: dropdown.select(btn.text))
             dropdown.add_widget(btn)
-        mainbutton = Button(text='Click to Choose Type')
-        pointtype.add_widget(mainbutton)
-        mainbutton.bind(on_release=dropdown.open)
-        dropdown.bind(on_select=lambda instance, x: setattr(mainbutton, 'text', x))
+        self.mainbutton = Button(text='Click to Choose Type')
+        pointtype.add_widget(self.mainbutton)
+        self.mainbutton.bind(on_release=dropdown.open)
+        dropdown.bind(on_select=lambda instance, x: setattr(self.mainbutton, 'text', x))
 
         leniency = BoxLayout(orientation='vertical')
         select_box.add_widget(leniency)
         leniency.add_widget(Label(text='Leniency',
                               font_size='15sp'))
-        slider = Slider(min=0, max=2, value=0)
-        leniency.add_widget(slider)
+        self.leniency_value = Label(text='0.0', font_size='15sp')
+        leniency.add_widget(self.leniency_value)
+        self.slider = Slider(min=0, max=2, value=0)
+        self.slider.bind(on_touch_move=self.move_slider)
+        leniency.add_widget(self.slider)
 
         ok_box = BoxLayout(orientation='horizontal')
         right_side.add_widget(ok_box)
@@ -189,7 +192,6 @@ class EditExercise(Screen):
         ok_anchor.add_widget(ok_btn)
         ok_box.add_widget(ok_anchor)
         
-
         btn_box = BoxLayout(orientation='horizontal')
         right_side.add_widget(btn_box)
         reset_btn = Button(text="Reset exercise",
@@ -213,8 +215,18 @@ class EditExercise(Screen):
     def record_frame(self, instance):
         self.manager.current = 'record frame'
         
+    def move_slider(self, *args):
+        self.leniency_value.text = str(round(self.slider.value, 2))
+
     def ok(self, instance):
-        return 1
+        # indexes
+        print(self.index_input1.text)
+        # time limit
+        print(self.index_input2.text)
+        # point type
+        print(self.mainbutton.text)
+        # leniency
+        print(round(self.slider.value, 2))
     
     def reset(self, instance):
         return 1
