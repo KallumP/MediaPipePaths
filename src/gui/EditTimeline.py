@@ -21,6 +21,7 @@ from kivy.factory import Factory
 import kivy_garden.draggable
 import win32api 
 from kivy.uix.label import Label
+from kivy.uix.image import Image
 
 KV_CODE = '''
 <MyReorderableLayout@KXReorderableBehavior+BoxLayout>:
@@ -39,12 +40,6 @@ KV_CODE = '''
         Line:
             width: 2 if root.is_being_dragged else 1
             rectangle: [*self.pos, *self.size, ]
-    BoxLayout:
-        orientation: 'horizontal'
-        Button:
-            text: 'Edit'
-        Button:
-            text: 'Delete'
 ScrollView:
     MyReorderableLayout:
         id: ReorderableLayout
@@ -83,6 +78,13 @@ class EditTimeline(Screen):
 
         #self.layout.add_widget(self.title_text)
 
+        current_dir = os.getcwd()
+        print(current_dir)
+        os.chdir("..")
+        arrow = Image(source = 'graphics/longWhiteArrow.png', size_hint_x=0.7, pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
+        self.layout.add_widget(arrow)
+        os.chdir(current_dir)
+
         self.content_layout = BoxLayout(orientation='horizontal', spacing=10)
 
         self.exerciseLayout = Builder.load_string(KV_CODE)
@@ -93,6 +95,9 @@ class EditTimeline(Screen):
         #self.layout.add_widget(self.buttonLayout)
 
         self.layout.add_widget(self.content_layout)
+
+        padding = Label(text="")
+        self.layout.add_widget(padding)
 
         self.add_widget(self.layout)
 
