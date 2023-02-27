@@ -61,7 +61,13 @@ class RecordFrame(Screen):
         self.layout.add_widget(btn_area)
         self.add_widget(self.layout)
     
+    def start_update(self):
+        self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+
     def confirm(self, instance):
+        if self.update_event is not None and self.update_event.is_triggered:
+            self.update_event.cancel()
+
         if self.texture1 is not None:
             self.manager.get_screen('edit exercise').img1.texture = self.texture1
             self.manager.current = 'edit exercise'
@@ -69,6 +75,10 @@ class RecordFrame(Screen):
             self.manager.current = 'edit exercise'
 
     def record(self, instance):
+        if not self.update_event.is_triggered:
+            self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+        if self.texture1 is not None:
+            self.texture1 = None
         self.countdown(5, self.capture_image)
 
     def capture_image(self):
@@ -137,11 +147,14 @@ class RecordFrame(Screen):
 
     def cancel(self, instance):
         if self.update_event is not None and self.update_event.is_triggered:
-            # if update event is not cancelled, then return to edit exercise page
-            self.manager.current = 'edit exercise'
-        else:
-            # if update event is cancelled, then start it again
-            self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+            self.update_event.cancel()
+        self.manager.current = 'edit exercise'
+        # if self.update_event is not None and self.update_event.is_triggered:
+        #     # if update event is not cancelled, then return to edit exercise page
+        #     self.manager.current = 'edit exercise'
+        # else:
+        #     # if update event is cancelled, then start it again
+        #     self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
 
     def update(self, dt):
         # display image from cam in opencv window
