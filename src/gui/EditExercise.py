@@ -29,7 +29,8 @@ key_frame_index_result = []
 
 exercise_json_content = {}
 
-frame_points = []
+frame_list = []
+
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -43,6 +44,7 @@ class EditExercise(Screen):
         self.exercise_name = ""
         self.exercise_video_link = ""
         self.frame_index = 0
+        self.frame_points = []
 
         width = Window.width
         height = Window.height
@@ -347,7 +349,7 @@ class EditExercise(Screen):
                     point["toTrack"] = final_index
                     point["angle"] = target
                     point["leniency"] = target*round(self.slider.value, 2)
-                    frame_points.append(point)
+                    self.frame_points.append(point)
                 #Pointtpe is triPointAngle
                 elif self.dropdownbutton.text == 'pointPosition':
                     target = src.helper.WithinTarget(target_index,key_frame_index_result.landmark)
@@ -355,19 +357,19 @@ class EditExercise(Screen):
                     point["toTrack"] = final_index
                     point["target"] = target
                     point["leniency"] = round(self.slider.value, 2)
-                    frame_points.append(point)
+                    self.frame_points.append(point)
                 #Pointtpe is parallelPosition
                 elif self.dropdownbutton.text == 'parallelPosition':
                     point["pointType"] = self.dropdownbutton.text
                     point["toTrack"] = final_index
                     point["leniency"] = round(self.slider.value, 2)
-                    frame_points.append(point)
+                    self.frame_points.append(point)
                 #Pointtpe is abovePosition
                 elif self.dropdownbutton.text == 'abovePosition':
                     point["pointType"] = self.dropdownbutton.text
                     point["toTrack"] = final_index
                     point["leniency"] = round(self.slider.value, 2)
-                    frame_points.append(point)
+                    self.frame_points.append(point)
             #Targeted index out of frame
             else:
                 self.call_pops()
@@ -381,10 +383,11 @@ class EditExercise(Screen):
         return 1
     
     def next(self, instance):
-        self.update_exercise_json()
+        self.time_limit_pops()
         #return 1      
 
     def complete(self, instance):
+        exercise_json_content["keyframes"].append(frame_list) 
         #Create exercise json
         with open(self.exercise_name+".json",'w') as file:
             file.seek(0)
@@ -409,11 +412,10 @@ class EditExercise(Screen):
         
         for exercise in timeline:              
             add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
-            current_dir = os.getcwd()
-            os.chdir("../..")
-            arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
-            add_widget(arrow)
-            os.chdir(current_dir)
+        
+        #exercise_json_content.clear()
+
+        frame_list.clear()
         self.manager.current = 'edit timeline' 
 
     def cancel(self, instance):
@@ -429,19 +431,16 @@ class EditExercise(Screen):
         
         for exercise in timeline:              
             add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
-            current_dir = os.getcwd()
-            os.chdir("../..")
-            arrow = Image(source = 'graphics/whiteArrow.png', size_hint=(None,None), pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
-            add_widget(arrow)
-            os.chdir(current_dir)
 
         self.manager.current = 'edit timeline'
     
     def refresh(self):
         self.name_label.text = self.exercise_name
 
-    def update_exercise_json(self):      
-        exercise_json_content["keyframes"].append({"points": frame_points,"timeLimit" : -1})
+    def update_exercise_json(self, time_limit): 
+        #exercise_json_content["keyframes"].append({"points": self.frame_points,"timeLimit" : time_limit})
+        frame_list.append({"points": self.frame_points,"timeLimit" : time_limit})
+        
         #print(exercise_json_content)
 
     def call_pops(self):
@@ -454,3 +453,31 @@ class EditExercise(Screen):
 
         # open the popup
         popup.open()
+
+    def time_limit_pops(self):
+        time_limit_box = BoxLayout(orientation='vertical')
+
+        self.time_limit_input = TextInput(text='', multiline=False)   
+        time_limit_box.add_widget(self.time_limit_input) 
+        
+        self.cfm_btn = Button(text='Confirm')
+        time_limit_box.add_widget(self.cfm_btn)               
+
+        popup = Popup(title = "Enter a time limit value (sec), leave empty if no limit", content=time_limit_box, size_hint=(0.5,0.2), auto_dismiss=False)
+        
+        self.cfm_btn.bind(on_press=popup.dismiss)
+        self.cfm_btn.bind(on_press=self.update_time_limit)
+        # open the popup
+        popup.open()
+
+    def update_time_limit(self, instance):
+        if self.time_limit_input.text:
+            time_limit = int(self.time_limit_input.text)
+            self.update_exercise_json(time_limit)
+            self.frame_points = []
+        else:
+            time_limit = -1
+            self.update_exercise_json(time_limit)
+            self.frame_points = []
+        print(frame_list)
+            
