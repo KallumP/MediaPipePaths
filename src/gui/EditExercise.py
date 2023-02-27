@@ -326,6 +326,7 @@ class EditExercise(Screen):
         self.root.height = height
 
     def record_frame(self, instance):
+        self.manager.get_screen('record frame').update_event = Clock.schedule_interval(self.manager.get_screen('record frame').update, 1.0/3000.0)
         self.manager.current = 'record frame'
         
     def move_slider(self, *args):
