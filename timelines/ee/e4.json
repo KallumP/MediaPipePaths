@@ -1,0 +1,25 @@
+{
+    "fileType": "body",
+    "videoLink": "l4",
+    "repeat": "1",
+    "keyframes": [
+        [
+            {
+                "points": [
+                    {
+                        "pointType": "pointPosition",
+                        "toTrack": [
+                            14
+                        ],
+                        "target": [
+                            0.0865173488855362,
+                            0.2727428376674652
+                        ],
+                        "leniency": 0
+                    }
+                ],
+                "timeLimit": -1
+            }
+        ]
+    ]
+}

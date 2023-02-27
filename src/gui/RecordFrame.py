@@ -46,17 +46,17 @@ class RecordFrame(Screen):
         self.layout.add_widget(image_area)
 
         btn_area = BoxLayout(orientation = 'vertical', size_hint=(1, 0.2))
-        record_btn = Button(text="Record",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5})
-        record_btn.bind(on_press=self.record)
-        btn_area.add_widget(record_btn)
+        self.record_btn = Button(text="Record",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5}, disabled = False)
+        self.record_btn.bind(on_press=self.record)
+        btn_area.add_widget(self.record_btn)
 
-        cancel_btn = Button(text="Cancel",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5})
-        cancel_btn.bind(on_press=self.cancel)
-        btn_area.add_widget(cancel_btn)
+        self.cancel_btn = Button(text="Cancel",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5}, disabled = False)
+        self.cancel_btn.bind(on_press=self.cancel)
+        btn_area.add_widget(self.cancel_btn)
         
-        confirm_btn = Button(text="Confirm", size_hint=(0.3,0.01), pos_hint={'center_x': 0.5})
-        confirm_btn.bind(on_press=self.confirm)
-        btn_area.add_widget(confirm_btn)
+        self.confirm_btn = Button(text="Confirm", size_hint=(0.3,0.01), pos_hint={'center_x': 0.5}, disabled = False)
+        self.confirm_btn.bind(on_press=self.confirm)
+        btn_area.add_widget(self.confirm_btn)
 
         self.layout.add_widget(btn_area)
         self.add_widget(self.layout)
@@ -75,6 +75,9 @@ class RecordFrame(Screen):
             self.manager.current = 'edit exercise'
 
     def record(self, instance):
+        self.record_btn.disabled = True
+        self.cancel_btn.disabled = True
+        self.confirm_btn.disabled = True
         if not self.update_event.is_triggered:
             self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
         if self.texture1 is not None:
@@ -83,6 +86,9 @@ class RecordFrame(Screen):
 
     def capture_image(self):
         self.update_event.cancel()
+        self.record_btn.disabled = False
+        self.cancel_btn.disabled = False
+        self.confirm_btn.disabled = False
         #print(self.results.pose_landmarks)
 
         src.gui.EditExercise.key_frame_index_result = self.results.pose_landmarks

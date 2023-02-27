@@ -64,8 +64,9 @@ class EditExercise(Screen):
                                   font_size='25sp')
         top_area.add_widget(self.name_label)
         # show the frame index
-        top_area.add_widget(Label(text='Current frame:' + str(self.frame_index), 
-                                  font_size='25sp'))
+        self.frame_index_label = Label(text='Current frame:' + str(self.frame_index), 
+                                  font_size='25sp')
+        top_area.add_widget(self.frame_index_label)
         # draw a line to show the boundry
         """with top_area.canvas:
             Line(points=[0, height*9/10, 
@@ -371,6 +372,11 @@ class EditExercise(Screen):
                     point["toTrack"] = final_index
                     point["leniency"] = round(self.slider.value, 2)
                     self.frame_points.append(point)
+                #Reset right side
+                self.index_input_box.clear_widgets()
+                self.dropdownbutton.text='Choose a point type'
+                self.slider.value = 0
+                self.leniency_value.text = '0.0'
             #Targeted index out of frame
             else:
                 self.call_pops()
@@ -384,6 +390,8 @@ class EditExercise(Screen):
         return 1
     
     def next(self, instance):
+        self.frame_index+=1
+        self.frame_index_label.text='Current frame:' + str(self.frame_index)
         self.time_limit_pops()
         #return 1      
 
