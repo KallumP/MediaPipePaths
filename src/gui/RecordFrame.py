@@ -31,7 +31,7 @@ class RecordFrame(Screen):
 
         # this area is used to show gestures catched by camera
         image_area = BoxLayout(size_hint=(1, 0.8))
-        self.img1=Image()
+        self.img1 = Image()
         image_area.add_widget(self.img1)
         #mediaPipe
         self.mp_pose = mp.solutions.pose
@@ -40,7 +40,8 @@ class RecordFrame(Screen):
         self.mp_drawing_styles = mp.solutions.drawing_styles
         #opencv2 stuffs
         self.capture = cv2.VideoCapture(0)
-        self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+        # self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+        self.update_event = None
 
         self.layout.add_widget(image_area)
 
