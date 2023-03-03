@@ -31,7 +31,7 @@ class RecordFrame(Screen):
 
         # this area is used to show gestures catched by camera
         image_area = BoxLayout(size_hint=(1, 0.8))
-        self.img1=Image()
+        self.img1 = Image()
         image_area.add_widget(self.img1)
         #mediaPipe
         self.mp_pose = mp.solutions.pose
@@ -40,27 +40,34 @@ class RecordFrame(Screen):
         self.mp_drawing_styles = mp.solutions.drawing_styles
         #opencv2 stuffs
         self.capture = cv2.VideoCapture(0)
-        self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+        # self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+        self.update_event = None
 
         self.layout.add_widget(image_area)
 
         btn_area = BoxLayout(orientation = 'vertical', size_hint=(1, 0.2))
-        record_btn = Button(text="Record",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5})
-        record_btn.bind(on_press=self.record)
-        btn_area.add_widget(record_btn)
+        self.record_btn = Button(text="Record",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5}, disabled = False)
+        self.record_btn.bind(on_press=self.record)
+        btn_area.add_widget(self.record_btn)
 
-        cancel_btn = Button(text="Cancel",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5})
-        cancel_btn.bind(on_press=self.cancel)
-        btn_area.add_widget(cancel_btn)
+        self.cancel_btn = Button(text="Cancel",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5}, disabled = False)
+        self.cancel_btn.bind(on_press=self.cancel)
+        btn_area.add_widget(self.cancel_btn)
         
-        confirm_btn = Button(text="Confirm", size_hint=(0.3,0.01), pos_hint={'center_x': 0.5})
-        confirm_btn.bind(on_press=self.confirm)
-        btn_area.add_widget(confirm_btn)
+        self.confirm_btn = Button(text="Confirm", size_hint=(0.3,0.01), pos_hint={'center_x': 0.5}, disabled = False)
+        self.confirm_btn.bind(on_press=self.confirm)
+        btn_area.add_widget(self.confirm_btn)
 
         self.layout.add_widget(btn_area)
         self.add_widget(self.layout)
     
+    def start_update(self):
+        self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+
     def confirm(self, instance):
+        if self.update_event is not None and self.update_event.is_triggered:
+            self.update_event.cancel()
+
         if self.texture1 is not None:
             self.manager.get_screen('edit exercise').img1.texture = self.texture1
             self.manager.current = 'edit exercise'
@@ -68,10 +75,20 @@ class RecordFrame(Screen):
             self.manager.current = 'edit exercise'
 
     def record(self, instance):
+        self.record_btn.disabled = True
+        self.cancel_btn.disabled = True
+        self.confirm_btn.disabled = True
+        if not self.update_event.is_triggered:
+            self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+        if self.texture1 is not None:
+            self.texture1 = None
         self.countdown(5, self.capture_image)
 
     def capture_image(self):
         self.update_event.cancel()
+        self.record_btn.disabled = False
+        self.cancel_btn.disabled = False
+        self.confirm_btn.disabled = False
         #print(self.results.pose_landmarks)
 
         src.gui.EditExercise.key_frame_index_result = self.results.pose_landmarks
@@ -136,11 +153,14 @@ class RecordFrame(Screen):
 
     def cancel(self, instance):
         if self.update_event is not None and self.update_event.is_triggered:
-            # if update event is not cancelled, then return to edit exercise page
-            self.manager.current = 'edit exercise'
-        else:
-            # if update event is cancelled, then start it again
-            self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
+            self.update_event.cancel()
+        self.manager.current = 'edit exercise'
+        # if self.update_event is not None and self.update_event.is_triggered:
+        #     # if update event is not cancelled, then return to edit exercise page
+        #     self.manager.current = 'edit exercise'
+        # else:
+        #     # if update event is cancelled, then start it again
+        #     self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
 
     def update(self, dt):
         # display image from cam in opencv window

@@ -77,7 +77,6 @@ class EditTimeline(Screen):
         #self.layout.add_widget(self.title_text)
 
         current_dir = os.getcwd()
-        print(current_dir)
         os.chdir("..")
         arrow = Image(source = 'graphics/longWhiteArrow.png', size_hint_x=0.5, pos_hint={'center_y': 0.5, 'center_x': 0.5}) 
         self.layout.add_widget(arrow)
