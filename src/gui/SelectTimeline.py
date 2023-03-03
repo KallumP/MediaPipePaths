@@ -41,9 +41,10 @@ KV_CODE = '''
         orientation: 'horizontal'
         Button:
             text: 'Edit'
+            id: editButton
         Button:
             text: 'Delete'
-
+            id: deleteButton
 '''
 
 class ScreenManagement(ScreenManager):
@@ -122,4 +123,20 @@ class SelectTimeline(Screen):
         editTimeline.title_text.text += timelineName
         
         for exercise in self.timeline:
-            add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
+            item=Item(text=exercise.get("exercise").replace('.json',''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
+            item.ids.editButton.bind(on_press=self.edit)
+            item.ids.deleteButton.bind(on_press=self.delete)
+            add_widget(item)
+    
+    def edit(self, instance):
+        editExercise = self.manager.get_screen('edit exercise')
+        
+        print("Edit was pressed!")
+    
+    def delete(self, instance):
+        #Instance refers to the Button, while its parent is the BoxLayout within which the Button is contained
+        #We need to remove the DraggableItem itself, which is the parent of the BoxLayout
+        #We remove this DraggableItem from its parent, that is the ReorderableLayout
+        itemToBeRemoved = instance.parent.parent
+        layoutToRemoveFrom = itemToBeRemoved.parent
+        layoutToRemoveFrom.remove_widget(itemToBeRemoved)
