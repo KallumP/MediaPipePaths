@@ -165,6 +165,9 @@ class NewExercise(Screen):
         print("Edit was pressed!")
     
     def delete(self, instance):
+        #Instance refers to the Button, while its parent is the BoxLayout within which the Button is contained
+        #We need to remove the DraggableItem itself, which is the parent of the BoxLayout
+        #We remove this DraggableItem from its parent, that is the ReorderableLayout
         itemToBeRemoved = instance.parent.parent
         layoutToRemoveFrom = itemToBeRemoved.parent
         layoutToRemoveFrom.remove_widget(itemToBeRemoved)
