@@ -1,0 +1,63 @@
+{
+    "fileType": "body",
+    "videoLink": "l4",
+    "repeat": "1",
+    "keyframes": [
+        [
+            {
+                "points": [
+                    {
+                        "pointType": "pointPosition",
+                        "toTrack": [
+                            12
+                        ],
+                        "target": [
+                            0.24954548478126526,
+                            0.7791194319725037
+                        ],
+                        "leniency": 0.05
+                    },
+                    {
+                        "pointType": "pointPosition",
+                        "toTrack": [
+                            11
+                        ],
+                        "target": [
+                            0.6619083285331726,
+                            0.8002184629440308
+                        ],
+                        "leniency": 0.16
+                    }
+                ],
+                "timeLimit": -1
+            },
+            {
+                "points": [
+                    {
+                        "pointType": "pointPosition",
+                        "toTrack": [
+                            16
+                        ],
+                        "target": [
+                            0.3576938211917877,
+                            0.2603130638599396
+                        ],
+                        "leniency": 0
+                    },
+                    {
+                        "pointType": "pointPosition",
+                        "toTrack": [
+                            15
+                        ],
+                        "target": [
+                            0.5941721200942993,
+                            0.23393027484416962
+                        ],
+                        "leniency": 0
+                    }
+                ],
+                "timeLimit": -1
+            }
+        ]
+    ]
+}

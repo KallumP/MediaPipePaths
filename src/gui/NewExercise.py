@@ -54,17 +54,17 @@ class NewExercise(Screen):
 
         input_area.add_widget(Label(text='Exercise name', font_size='20sp',size_hint=(1, 0.2)))
 
-        self.exercise_name = TextInput(text = '', font_size = '25sp', size_hint = (1, 0.3), multiline = False)
+        self.exercise_name = TextInput(text = '', font_size = '25sp', size_hint = (1, 0.3), write_tab=False, multiline = False)
         input_area.add_widget(self.exercise_name)
 
         input_area.add_widget(Label(text='Exercise video link', font_size='20sp',size_hint=(1, 0.2)))
 
-        self.exercise_video_link = TextInput(text = '', font_size = '25sp', size_hint = (1, 0.3), multiline = False)
+        self.exercise_video_link = TextInput(text = '', font_size = '25sp', size_hint = (1, 0.3), write_tab=False, multiline = False)
         input_area.add_widget(self.exercise_video_link)
 
         input_area.add_widget(Label(text='Repeat', font_size='20sp' ,size_hint=(1, 0.2)))
 
-        self.repeat_times = TextInput(text = '1', font_size = '25sp', size_hint = (1, 0.3), multiline = False)
+        self.repeat_times = TextInput(text = '1', font_size = '25sp', size_hint = (1, 0.3), write_tab=False, multiline = False)
         input_area.add_widget(self.repeat_times)
 
         self.layout.add_widget(input_area)
@@ -81,7 +81,7 @@ class NewExercise(Screen):
 
     def create_exercise(self, instance):
         #not self.repeat_times.text.replace(".", "").isnumeric()
-        if self.repeat_times.text.isnumeric() and self.exercise_name.text != "":
+        if self.repeat_times.text.isnumeric() and self.exercise_name.text != "" and self.exercise_video_link.text != "":
             #self.modify_timeline()
             self.create_exercise_json()
             self.manager.get_screen('edit exercise').exercise_name = str(self.exercise_name.text)
