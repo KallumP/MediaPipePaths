@@ -43,7 +43,7 @@ class EditExercise(Screen):
 
         self.exercise_name = ""
         self.exercise_video_link = ""
-        self.frame_index = 0
+        self.frame_index = 1
         self.frame_points = []
 
         width = Window.width
@@ -285,38 +285,38 @@ class EditExercise(Screen):
         self.index_input_box.clear_widgets()
         if instance.text == 'triPointAngle':
             self.index_input_box.add_widget(Label(text='Start', size_hint=(0.2, None)))
-            self.start_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.start_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.start_index)
             self.index_input_box.add_widget(Label(text='Middle', size_hint=(0.2, None)))
-            self.middle_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.middle_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.middle_index)
             self.index_input_box.add_widget(Label(text='End', size_hint=(0.2, None)))
-            self.end_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.end_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.end_index)
         elif instance.text == 'pointPosition':
             self.index_input_box.add_widget(Label(text='Point', size_hint=(0.2, None)))
-            self.point_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.point_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.point_index)
         elif instance.text == 'parallelPosition':
             self.index_input_box.add_widget(Label(text='Arm1 point 1', size_hint=(0.2, None)))
-            self.a1_point1_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.a1_point1_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.a1_point1_index)
             self.index_input_box.add_widget(Label(text='Arm1 point 2', size_hint=(0.2, None)))
-            self.a1_point2_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.a1_point2_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.a1_point2_index)
             
             self.index_input_box.add_widget(Label(text='Arm2 point 1', size_hint=(0.2, None)))
-            self.a2_point1_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.a2_point1_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.a2_point1_index)
             self.index_input_box.add_widget(Label(text='Arm2 point 2', size_hint=(0.2, None)))
-            self.a2_point2_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.a2_point2_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.a2_point2_index)
         elif instance.text == 'abovePosition':
             self.index_input_box.add_widget(Label(text='Above point', size_hint=(0.2, None)))
-            self.above_point_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.above_point_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.above_point_index)
             self.index_input_box.add_widget(Label(text='Below point', size_hint=(0.2, None)))
-            self.below_point_index = TextInput(text='', size_hint=(0.8, None), multiline=False)
+            self.below_point_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
             self.index_input_box.add_widget(self.below_point_index)
 
     def edit_relationship(self, instance):
@@ -387,11 +387,15 @@ class EditExercise(Screen):
             self.pop_content.text = 'No exercise recorded'
     
     def reset(self, instance):
-        return 1
+        frame_list.clear()
+        #return 1
     
     def next(self, instance):
         self.frame_index+=1
         self.frame_index_label.text='Current frame:' + str(self.frame_index)
+        src.gui.EditExercise.key_frame_index_result = []
+        frame_list.clear()
+        self.img1.texture = None
         self.time_limit_pops()
         #return 1      
 
@@ -422,9 +426,13 @@ class EditExercise(Screen):
         for exercise in timeline:              
             add_widget(Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5}))
         
-        #exercise_json_content.clear()
-
+        src.gui.EditExercise.key_frame_index_result = []
+        #exercise_json_content=None
         frame_list.clear()
+        self.img1.texture = None
+        self.frame_index = 1
+        self.frame_index_label.text='Current frame:' + str(self.frame_index)
+
         self.manager.current = 'edit timeline' 
 
     def cancel(self, instance):
@@ -439,7 +447,7 @@ class EditExercise(Screen):
         add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
         
         for exercise in timeline:              
-           item=Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
+            item=Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
             item.ids.editButton.bind(on_press=self.edit)
             item.ids.deleteButton.bind(on_press=self.delete)
             add_widget(item)
