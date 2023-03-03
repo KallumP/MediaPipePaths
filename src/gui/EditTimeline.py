@@ -54,8 +54,6 @@ class EditTimeline(Screen):
     def __init__(self, **kwargs):
         super(EditTimeline, self).__init__(**kwargs) 
         
-        Window.bind(mouse_pos=self.on_mouseover)
-
         self.layout = BoxLayout(orientation='vertical')  
 
         self.bannerLayout = GridLayout(cols=2, size_hint=(1, 0.4))
@@ -130,13 +128,6 @@ class EditTimeline(Screen):
         self.title_text.text = 'Edit timeline - '
 
         os.chdir('..')
-
-    def on_mouseover(self, window, pos):
-        state_left = win32api.GetKeyState(0x01)
-        for widget in self.exerciseLayout.ids.ReorderableLayout.children:
-            if(str(type(widget))=="<class 'kivy.factory.MyDraggableItem'>"):
-                if widget.collide_point(*pos) and state_left >= 0 and self.manager.current == "edit timeline":
-                    print("")
 
     def add_exercise(self, instance):
         self.exerciseLayout.ids.ReorderableLayout.clear_widgets()
