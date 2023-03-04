@@ -15,6 +15,12 @@ import src.gui.EditExercise
 import src.gui.RecordFrame
 #from src.gui import  
 
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+
+cred = credentials.Certificate("motion-9821b-firebase-adminsdk-3ckyy-d8eb4e8958.json")
+
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenManagement, self).__init__(**kwargs)

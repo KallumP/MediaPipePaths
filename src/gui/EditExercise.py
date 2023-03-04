@@ -25,6 +25,8 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.dropdown import DropDown
 from kivy.uix.popup import Popup
 
+import src.gui.EditTimeline
+
 key_frame_index_result = []
 
 exercise_json_content = {}
@@ -394,18 +396,22 @@ class EditExercise(Screen):
         self.frame_index+=1
         self.frame_index_label.text='Current frame:' + str(self.frame_index)
         src.gui.EditExercise.key_frame_index_result = []
-        frame_list.clear()
+        #frame_list.clear()
         self.img1.texture = None
         self.time_limit_pops()
         #return 1      
 
     def complete(self, instance):
         exercise_json_content["keyframes"].append(frame_list) 
+        #src.gui.EditTimeline.exercise_name_list.append(self.name_label.text)
+        
         #Create exercise json
         with open(self.exercise_name+".json",'w') as file:
             file.seek(0)
             json.dump(exercise_json_content, file, indent = 4)
             file.close()
+        #src.gui.EditTimeline.exercise_json.append(exercise_json_content)
+        #print(src.gui.EditTimeline.exercise_json)
         with open("TimelineList.json", 'r') as file:
             timeline_data = json.load(file)
             new_exercise = {"exercise": self.name_label.text+".json"}
@@ -499,7 +505,6 @@ class EditExercise(Screen):
             time_limit = -1
             self.update_exercise_json(time_limit)
             self.frame_points = []
-        print(frame_list)
             
     
     def edit(self, instance):

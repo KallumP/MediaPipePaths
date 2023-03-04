@@ -1,0 +1,50 @@
+{
+    "fileType": "body",
+    "videoLink": "link1",
+    "repeat": "1",
+    "keyframes": [
+        [
+            {
+                "points": [
+                    {
+                        "pointType": "triPointAngle",
+                        "toTrack": [
+                            15,
+                            13,
+                            11
+                        ],
+                        "angle": 76.99217615389765,
+                        "leniency": 10.008982900006695
+                    },
+                    {
+                        "pointType": "pointPosition",
+                        "toTrack": [
+                            13
+                        ],
+                        "target": [
+                            0.6422677040100098,
+                            0.48357856273651123
+                        ],
+                        "leniency": 0.12
+                    }
+                ],
+                "timeLimit": -1
+            },
+            {
+                "points": [
+                    {
+                        "pointType": "triPointAngle",
+                        "toTrack": [
+                            12,
+                            14,
+                            16
+                        ],
+                        "angle": 76.77912671997018,
+                        "leniency": 3.838956335998509
+                    }
+                ],
+                "timeLimit": -1
+            }
+        ]
+    ]
+}

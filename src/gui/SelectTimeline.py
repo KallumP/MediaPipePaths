@@ -21,6 +21,8 @@ from kivy.lang import Builder
 from kivy.factory import Factory
 import kivy_garden.draggable
 
+import src.gui.EditTimeline
+
 KV_CODE = '''
 <MyDraggableItem@KXDraggableBehavior+BoxLayout>:
     orientation: 'vertical'
@@ -106,6 +108,12 @@ class SelectTimeline(Screen):
         self.fileType = pathJson.get("fileType")
         self.timeline = pathJson.get("timeline")
         self.update_screen_with_timeline(timelineName)
+        src.gui.EditTimeline.timeline_name = timelineName
+        """for exercise in self.timeline:
+            src.gui.EditTimeline.exercise_name_list.append(list(exercise.values())[0].replace(".json",""))
+            with open(list(exercise.values())[0], 'r') as f:
+                pathJson = json.load(f)
+                src.gui.EditTimeline.exercise_json.append(pathJson)"""
         #except:
             #f = open("TimelineList.json", "w")
             #TimelineListContent = """{\n    "fileType": "timeline",\n    "timeline": [\n    ]\n}"""           
