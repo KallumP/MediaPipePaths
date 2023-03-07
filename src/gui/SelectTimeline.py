@@ -16,12 +16,13 @@ import os.path
 from os import listdir
 from os.path import isfile, join
 import json
-
+import time
 from kivy.lang import Builder
 from kivy.factory import Factory
 import kivy_garden.draggable
 
 import src.gui.EditTimeline
+import src.gui.TestExercise
 
 KV_CODE = '''
 <MyDraggableItem@KXDraggableBehavior+BoxLayout>:
@@ -44,6 +45,9 @@ KV_CODE = '''
         Button:
             text: 'Edit'
             id: editButton
+        Button:
+            text: 'Test'
+            id: testButton
         Button:
             text: 'Delete'
             id: deleteButton
@@ -94,8 +98,7 @@ class SelectTimeline(Screen):
     def open_timeline(self, instance):   
         os.chdir(instance.text)     
         self.read_timeline(instance.text)
-        self.manager.current = 'edit timeline' 
-        
+        self.manager.current = 'edit timeline'      
 
     def cancel_create(self, instance):
         self.manager.current = 'home'
@@ -133,6 +136,7 @@ class SelectTimeline(Screen):
         for exercise in self.timeline:
             item=Item(text=exercise.get("exercise").replace('.json',''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
             item.ids.editButton.bind(on_press=self.edit)
+            item.ids.testButton.bind(on_press=self.test)
             item.ids.deleteButton.bind(on_press=self.delete)
             add_widget(item)
     
@@ -141,6 +145,13 @@ class SelectTimeline(Screen):
         
         print("Edit was pressed!")
     
+    def test(self, instance):
+        src.gui.TestExercise.testing = True
+        src.gui.TestExercise.testing_exercise_json = instance.parent.parent.text + ".json"
+        self.manager.get_screen('test exercise').start_update()
+        self.manager.current = 'test exercise'
+        
+
     def delete(self, instance):
         #Instance refers to the Button, while its parent is the BoxLayout within which the Button is contained
         #We need to remove the DraggableItem itself, which is the parent of the BoxLayout

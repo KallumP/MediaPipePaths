@@ -13,6 +13,7 @@ import src.gui.EditTimeline
 import src.gui.NewExercise
 import src.gui.EditExercise
 import src.gui.RecordFrame
+import src.gui.TestExercise
 #from src.gui import  
 
 import firebase_admin
@@ -36,6 +37,7 @@ class Application(App):
         sm.add_widget(src.gui.NewExercise.NewExercise(name='new exercise'))
         sm.add_widget(src.gui.EditExercise.EditExercise(name='edit exercise'))
         sm.add_widget(src.gui.RecordFrame.RecordFrame(name='record frame'))
+        sm.add_widget(src.gui.TestExercise.TestExercise(name='test exercise'))
         
         return sm
 

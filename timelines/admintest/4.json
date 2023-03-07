@@ -1,0 +1,22 @@
+{
+    "fileType": "body",
+    "videoLink": "eqwdsa",
+    "repeat": "1",
+    "keyframes": [
+        {
+            "points": [
+                {
+                    "pointType": "triPointAngle",
+                    "toTrack": [
+                        15,
+                        13,
+                        11
+                    ],
+                    "angle": 75.30857621097358,
+                    "leniency": 16.567886766414187
+                }
+            ],
+            "timeLimit": -1
+        }
+    ]
+}
