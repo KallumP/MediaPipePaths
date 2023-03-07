@@ -7,7 +7,6 @@ from kivy.uix.label import Label
 from kivy.config import Config
 from kivy.core.window import Window
 
-
 #Can be changed later depending on the window size required
 #1280x720 works well for testing purposes
 Config.set('graphics', 'width', '1280')
@@ -43,7 +42,7 @@ class HomeScreen(Screen):
 
         self.add_widget(layout)
         #return layout
-    
+        
     def createNewTimeLine(self, instance):
         self.manager.current = 'new timeline'       
 

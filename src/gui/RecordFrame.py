@@ -39,7 +39,7 @@ class RecordFrame(Screen):
         self.mp_drawing = mp.solutions.drawing_utils
         self.mp_drawing_styles = mp.solutions.drawing_styles
         #opencv2 stuffs
-        self.capture = cv2.VideoCapture(0)
+        self.capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         # self.update_event = Clock.schedule_interval(self.update, 1.0/3000.0)
         self.update_event = None
 

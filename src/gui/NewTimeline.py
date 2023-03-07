@@ -26,6 +26,8 @@ import os
 import json
 import re
 
+import src.gui.EditTimeline
+
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenManagement, self).__init__(**kwargs)
@@ -78,6 +80,8 @@ class NewTimeline(Screen):
                 file.seek(0)
                 # convert back to json.
                 json.dump(content, file, indent = 4)  
+
+            src.gui.EditTimeline.timeline_name = self.timeline_name.text
 
             self.timeline_name.text = ''                   
             self.manager.current = 'edit timeline'                      

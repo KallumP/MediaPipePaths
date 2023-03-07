@@ -23,6 +23,13 @@ import win32api
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 
+import firebase_admin
+from firebase_admin import db
+import main
+firebase_admin.initialize_app(main.cred, {
+            'databaseURL':"https://motion-9821b-default-rtdb.europe-west1.firebasedatabase.app/"
+            })
+
 KV_CODE = '''
 <MyReorderableLayout@KXReorderableBehavior+BoxLayout>:
     spacing: 10
@@ -45,6 +52,11 @@ ScrollView:
         id: ReorderableLayout
         size_hint_min: self.minimum_size
 '''
+
+timeline_name = ""
+exercise_name_list = []
+exercise_json = []
+
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -113,6 +125,7 @@ class EditTimeline(Screen):
 
         self.exerciseLayout.ids.ReorderableLayout.clear_widgets()
 
+        
         with open("TimelineList.json",'w') as file:
             content = { "fileType":"timeline",
                         "timeline":[]}
@@ -124,6 +137,17 @@ class EditTimeline(Screen):
             file.seek(0)
             # convert back to json.
             json.dump(content, file, indent = 4) 
+        
+        ref = db.reference("/Timelines/"+timeline_name)
+        ref.set(content)
+        for exercise in updatedList:
+            exercise_name_list.append(exercise)
+            with open(exercise + ".json", 'r') as f:
+                pathJson = json.load(f)
+                exercise_json.append(pathJson)
+        for i in range(len(exercise_name_list)):
+            ref = db.reference("/Exercises/"+exercise_name_list[i])
+            ref.set(exercise_json[i])
 
         self.title_text.text = 'Edit timeline - '
 

@@ -13,7 +13,14 @@ import src.gui.EditTimeline
 import src.gui.NewExercise
 import src.gui.EditExercise
 import src.gui.RecordFrame
+import src.gui.TestExercise
 #from src.gui import  
+
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+
+cred = credentials.Certificate("motion-9821b-firebase-adminsdk-3ckyy-d8eb4e8958.json")
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -30,6 +37,7 @@ class Application(App):
         sm.add_widget(src.gui.NewExercise.NewExercise(name='new exercise'))
         sm.add_widget(src.gui.EditExercise.EditExercise(name='edit exercise'))
         sm.add_widget(src.gui.RecordFrame.RecordFrame(name='record frame'))
+        sm.add_widget(src.gui.TestExercise.TestExercise(name='test exercise'))
         
         return sm
 
