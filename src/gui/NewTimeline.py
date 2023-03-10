@@ -38,7 +38,7 @@ class NewTimeline(Screen):
         input_area = BoxLayout(orientation = 'vertical',size_hint=(0.5, 0.5),pos_hint={'center_y': 0.5, 'center_x': 0.5})
         input_area.add_widget(Label(text='Enter timeline name', font_size='30sp',size_hint=(1, 0.2)))
 
-        self.timeline_name = TextInput(text='', font_size='25sp',size_hint=(1, 0.05), multiline=False)
+        self.timeline_name = TextInput(text='', font_size='25sp',size_hint=(1, 0.05), write_tab=False, multiline=False)
         input_area.add_widget(self.timeline_name)
 
         self.warning_message = Label(text='', font_size='15sp',size_hint=(1, 0.03))
