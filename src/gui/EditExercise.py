@@ -244,51 +244,51 @@ class EditExercise(Screen):
 
         target_index = {"toTrack": final_index}     
         
-        try:
-            if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
-                #Targeted index in frame
-                #Pointtpe is triPointAngle
-                if self.dropdownbutton.text == 'triPointAngle':
-                    target = src.helper.WithinAngle(target_index,key_frame_index_result.landmark)
-                    point["pointType"] = self.dropdownbutton.text
-                    point["toTrack"] = final_index
-                    point["angle"] = target
-                    point["leniency"] = target*round(self.slider.value, 2)
-                    self.frame_points.append(point)
-                #Pointtpe is triPointAngle
-                elif self.dropdownbutton.text == 'pointPosition':
-                    target = src.helper.WithinTarget(target_index,key_frame_index_result.landmark)
-                    point["pointType"] = self.dropdownbutton.text
-                    point["toTrack"] = final_index
-                    point["target"] = target
-                    point["leniency"] = round(self.slider.value, 2)
-                    self.frame_points.append(point)
-                #Pointtpe is parallelPosition
-                elif self.dropdownbutton.text == 'parallelPosition':
-                    point["pointType"] = self.dropdownbutton.text
-                    point["toTrack"] = final_index
-                    point["leniency"] = round(self.slider.value, 2)
-                    self.frame_points.append(point)
-                #Pointtpe is abovePosition
-                elif self.dropdownbutton.text == 'abovePosition':
-                    point["pointType"] = self.dropdownbutton.text
-                    point["toTrack"] = final_index
-                    point["leniency"] = round(self.slider.value, 2)
-                    self.frame_points.append(point)
-                #Reset right side
-                self.index_input_box.clear_widgets()
-                self.dropdownbutton.text='Choose a point type'
-                self.slider.value = 0
-                self.leniency_value.text = '0.0'
-                self.update_keyframe_data()
-            #Targeted index out of frame
-            else:
-                self.call_pops()
-                self.pop_content.text = 'Targeted index out of frame'
-        # No recording 
-        except:
+        #try:
+        if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
+            #Targeted index in frame
+            #Pointtpe is triPointAngle
+            if self.dropdownbutton.text == 'triPointAngle':
+                target = src.helper.GoalAngle(target_index,key_frame_index_result.landmark)
+                point["pointType"] = self.dropdownbutton.text
+                point["toTrack"] = final_index
+                point["angle"] = target
+                point["leniency"] = target*round(self.slider.value, 2)
+                self.frame_points.append(point)
+            #Pointtpe is triPointAngle
+            elif self.dropdownbutton.text == 'pointPosition':
+                target = src.helper.GoalTarget(target_index,key_frame_index_result.landmark)
+                point["pointType"] = self.dropdownbutton.text
+                point["toTrack"] = final_index
+                point["target"] = target
+                point["leniency"] = round(self.slider.value, 2)
+                self.frame_points.append(point)
+            #Pointtpe is parallelPosition
+            elif self.dropdownbutton.text == 'parallelPosition':
+                point["pointType"] = self.dropdownbutton.text
+                point["toTrack"] = final_index
+                point["leniency"] = round(self.slider.value, 2)
+                self.frame_points.append(point)
+            #Pointtpe is abovePosition
+            elif self.dropdownbutton.text == 'abovePosition':
+                point["pointType"] = self.dropdownbutton.text
+                point["toTrack"] = final_index
+                point["leniency"] = round(self.slider.value, 2)
+                self.frame_points.append(point)
+            #Reset right side
+            self.index_input_box.clear_widgets()
+            self.dropdownbutton.text='Choose a point type'
+            self.slider.value = 0
+            self.leniency_value.text = '0.0'
+            self.update_keyframe_data()
+        #Targeted index out of frame
+        else:
             self.call_pops()
-            self.pop_content.text = 'No exercise recorded'
+            self.pop_content.text = 'Targeted index out of frame'
+        # No recording 
+        """except:
+            self.call_pops()
+            self.pop_content.text = 'No exercise recorded'"""
             
 
     def reset(self, instance):
@@ -402,11 +402,14 @@ class EditExercise(Screen):
         popup.open()
 
     def time_limit_pops(self):
-        if(self.preloaded_json_content!=""):
-            self.current_keyframe_index+=1
         time_limit_box = BoxLayout(orientation='vertical')
 
-        self.time_limit_input = TextInput(text=self.timeLimit, multiline=False)   
+        if(self.preloaded_json_content!=""):
+            self.current_keyframe_index+=1
+            self.time_limit_input = TextInput(text=self.timeLimit, multiline=False)   
+        else:
+            self.time_limit_input = TextInput(text="", multiline=False)   
+
         time_limit_box.add_widget(self.time_limit_input) 
         
         self.cfm_btn = Button(text='Confirm')
@@ -476,7 +479,6 @@ class EditExercise(Screen):
             editExercise.index_input_box.add_widget(Label(text='End', size_hint=(0.2, None)))
             editExercise.end_index = TextInput(text=str(points.get("toTrack")[2]), size_hint=(0.8, None), multiline=False)
             editExercise.index_input_box.add_widget(editExercise.end_index)
-        
         elif(pointType=='pointPosition'):
             editExercise.index_input_box.add_widget(Label(text='Point', size_hint=(0.2, None)))
             editExercise.point_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
