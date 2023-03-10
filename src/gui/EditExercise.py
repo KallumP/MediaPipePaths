@@ -33,7 +33,6 @@ exercise_json_content = {}
 
 frame_list = []
 
-
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
         super(ScreenManagement, self).__init__(**kwargs)
@@ -48,6 +47,10 @@ class EditExercise(Screen):
         self.frame_index = 1
         self.point_counter = 1
         self.frame_points = []
+
+        self.preloaded_json_content = ""
+        self.current_keyframe_index = 0
+        self.current_point_index = 0
 
         width = Window.width
         height = Window.height
@@ -165,10 +168,10 @@ class EditExercise(Screen):
                            size_hint=(1, 0.7))
         reset_btn.bind(on_press=self.reset)
         btn_box.add_widget(reset_btn)
-        next_btn = Button(text="Next frame",
+        self.next_btn = Button(text="Next frame",
                           size_hint=(1, 0.7))
-        next_btn.bind(on_press=self.next)
-        btn_box.add_widget(next_btn)
+        self.next_btn.bind(on_press=self.next)
+        btn_box.add_widget(self.next_btn)
         complete_btn = Button(text="Complete exercise",
                               size_hint=(1, 0.7))
         complete_btn.bind(on_press=self.complete)
@@ -227,6 +230,8 @@ class EditExercise(Screen):
         self.leniency_value.text = str(round(self.slider.value, 2))
 
     def next_point(self, instance):
+        if(self.preloaded_json_content!=""):
+            self.current_point_index+=1
         point = {}
         final_index = []
         #valid_input = True
@@ -236,61 +241,58 @@ class EditExercise(Screen):
                 if valid_input == False:
                     break
                 final_index.append(int(widget.text))
-        target_index = {"toTrack": final_index}  
-        if len(final_index)==0:
-            valid_input = False
 
-        if valid_input == True:
-            try:
-                if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
-                    #Targeted index in frame
-                    #Pointtpe is triPointAngle
-                    self.point_counter+=1
-                    self.frame_index_label.text='Current frame:' + str(self.frame_index) + "   Current point:" + str(self.point_counter)
-                    if self.dropdownbutton.text == 'triPointAngle':
-                        target = src.helper.GoalAngle(target_index,key_frame_index_result.landmark)
-                        point["pointType"] = self.dropdownbutton.text
-                        point["toTrack"] = final_index
-                        point["angle"] = target
-                        point["leniency"] = target*round(self.slider.value, 2)
-                        self.frame_points.append(point)
-                    #Pointtpe is triPointAngle
-                    elif self.dropdownbutton.text == 'pointPosition':
-                        target = src.helper.GoalTarget(target_index,key_frame_index_result.landmark)
-                        point["pointType"] = self.dropdownbutton.text
-                        point["toTrack"] = final_index
-                        point["target"] = target
-                        point["leniency"] = round(self.slider.value, 2)
-                        self.frame_points.append(point)
-                    #Pointtpe is parallelPosition
-                    elif self.dropdownbutton.text == 'parallelLines':
-                        point["pointType"] = self.dropdownbutton.text
-                        point["toTrack"] = final_index
-                        point["leniency"] = round(self.slider.value, 2)
-                        self.frame_points.append(point)
-                    #Pointtpe is abovePosition
-                    elif self.dropdownbutton.text == 'abovePosition':
-                        point["pointType"] = self.dropdownbutton.text
-                        point["toTrack"] = final_index
-                        point["leniency"] = round(self.slider.value, 2)
-                        self.frame_points.append(point)
-                    #Reset right side
-                    self.index_input_box.clear_widgets()
-                    self.dropdownbutton.text='Choose a point type'
-                    self.slider.value = 0
-                    self.leniency_value.text = '0.0'
-                #Targeted index out of frame
-                else:
-                    self.call_pops()
-                    self.pop_content.text = 'Targeted index out of frame'
-            # No recording 
-            except:
+        target_index = {"toTrack": final_index}     
+        
+        try:
+            if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
+                #Targeted index in frame
+                #Pointtpe is triPointAngle
+                if self.dropdownbutton.text == 'triPointAngle':
+                    target = src.helper.WithinAngle(target_index,key_frame_index_result.landmark)
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["angle"] = target
+                    point["leniency"] = target*round(self.slider.value, 2)
+                    self.frame_points.append(point)
+                #Pointtpe is triPointAngle
+                elif self.dropdownbutton.text == 'pointPosition':
+                    target = src.helper.WithinTarget(target_index,key_frame_index_result.landmark)
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["target"] = target
+                    point["leniency"] = round(self.slider.value, 2)
+                    self.frame_points.append(point)
+                #Pointtpe is parallelPosition
+                elif self.dropdownbutton.text == 'parallelPosition':
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["leniency"] = round(self.slider.value, 2)
+                    self.frame_points.append(point)
+                #Pointtpe is abovePosition
+                elif self.dropdownbutton.text == 'abovePosition':
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["leniency"] = round(self.slider.value, 2)
+                    self.frame_points.append(point)
+                #Reset right side
+                self.index_input_box.clear_widgets()
+                self.dropdownbutton.text='Choose a point type'
+                self.slider.value = 0
+                self.leniency_value.text = '0.0'
+                self.update_keyframe_data()
+            #Targeted index out of frame
+            else:
                 self.call_pops()
-                self.pop_content.text = 'No exercise recorded'
-    
+                self.pop_content.text = 'Targeted index out of frame'
+        # No recording 
+        except:
+            self.call_pops()
+            self.pop_content.text = 'No exercise recorded'
+            
+
     def reset(self, instance):
         frame_list.clear()
-        #return 1
     
     def next(self, instance):
         if self.frame_points:
@@ -347,7 +349,10 @@ class EditExercise(Screen):
         self.frame_index = 1
         self.frame_index_label.text='Current frame:' + str(self.frame_index)
 
-        self.manager.current = 'edit timeline' 
+        self.manager.current = 'edit timeline'
+        self.preloaded_json_content = ""
+        self.current_keyframe_index = 0
+        self.current_point_index = 0
 
     def cancel(self, instance):
         with open("TimelineList.json", 'r') as f:
@@ -397,9 +402,11 @@ class EditExercise(Screen):
         popup.open()
 
     def time_limit_pops(self):
+        if(self.preloaded_json_content!=""):
+            self.current_keyframe_index+=1
         time_limit_box = BoxLayout(orientation='vertical')
 
-        self.time_limit_input = TextInput(text='', multiline=False)   
+        self.time_limit_input = TextInput(text=self.timeLimit, multiline=False)   
         time_limit_box.add_widget(self.time_limit_input) 
         
         self.cfm_btn = Button(text='Confirm')
@@ -425,10 +432,82 @@ class EditExercise(Screen):
             time_limit = -1
             self.update_exercise_json(time_limit)
             self.frame_points = []
+
+        if(self.preloaded_json_content!=""):
+            self.current_point_index = 0
+            self.update_keyframe_data()
             
     
     def edit(self, instance):
-        print("Edit was pressed!")
+        editExercise = self.manager.get_screen('edit exercise')
+        self.manager.current = 'edit exercise'
+
+        #Setting the name of the JSON file to edit
+        filePath = instance.parent.parent.text+'.json'
+        editExercise.exercise_name = instance.parent.parent.text
+        
+        global pathJson
+        with open(filePath, 'r') as f:
+            pathJson = json.load(f)
+        
+        #Storing json string in editExercise
+        #Initialising values
+        json_string = json.dumps(pathJson)
+        editExercise.preloaded_json_content = json_string
+        editExercise.current_keyframe_index = 0
+        editExercise.current_point_index = 0
+        
+        #Parsing JSON files
+        keyframes = pathJson.get("keyframes")
+        editExercise.exercise_video_link=pathJson.get("videoLink")
+        keyframe = keyframes[editExercise.current_keyframe_index]
+        points = keyframe.get("points")[editExercise.current_point_index]
+
+        pointType = points.get("pointType")
+        editExercise.dropdownbutton.text = pointType
+
+        if(pointType=='triPointAngle'):
+            editExercise.index_input_box.add_widget(Label(text='Start', size_hint=(0.2, None)))
+            editExercise.start_index = TextInput(text=str(points.get("toTrack")[0]),size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.start_index)
+            editExercise.index_input_box.add_widget(Label(text='Middle', size_hint=(0.2, None)))
+            editExercise.middle_index = TextInput(text=str(points.get("toTrack")[1]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.middle_index)
+            editExercise.index_input_box.add_widget(Label(text='End', size_hint=(0.2, None)))
+            editExercise.end_index = TextInput(text=str(points.get("toTrack")[2]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.end_index)
+        
+        elif(pointType=='pointPosition'):
+            editExercise.index_input_box.add_widget(Label(text='Point', size_hint=(0.2, None)))
+            editExercise.point_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.point_index)
+        
+        elif(pointType=='parallelPosition'):
+            editExercise.index_input_box.add_widget(Label(text='Arm1 point 1', size_hint=(0.2, None)))
+            editExercise.a1_point1_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.a1_point1_index)
+            editExercise.index_input_box.add_widget(Label(text='Arm1 point 2', size_hint=(0.2, None)))
+            editExercise.a1_point2_index = TextInput(text=str(points.get("toTrack")[1]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.a1_point2_index)
+
+            editExercise.index_input_box.add_widget(Label(text='Arm2 point 1', size_hint=(0.2, None)))
+            editExercise.a2_point1_index = TextInput(text=str(points.get("toTrack")[2]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.a2_point1_index)
+            editExercise.index_input_box.add_widget(Label(text='Arm2 point 2', size_hint=(0.2, None)))
+            editExercise.a2_point2_index = TextInput(text=str(points.get("toTrack")[3]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.a2_point2_index)
+
+        elif(pointType=='abovePosition'):
+            editExercise.index_input_box.add_widget(Label(text='Above point', size_hint=(0.2, None)))
+            editExercise.above_point_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.above_point_index)
+            editExercise.index_input_box.add_widget(Label(text='Below point', size_hint=(0.2, None)))
+            editExercise.below_point_index = TextInput(text=str(points.get("toTrack")[1]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.below_point_index)
+        
+        editExercise.slider.value = points.get("leniency")
+        editExercise.move_slider()
+        editExercise.timeLimit=str(keyframe.get("timeLimit"))
     
     def test(self, instance):
         src.gui.TestExercise.testing = True
@@ -443,3 +522,62 @@ class EditExercise(Screen):
         itemToBeRemoved = instance.parent.parent
         layoutToRemoveFrom = itemToBeRemoved.parent
         layoutToRemoveFrom.remove_widget(itemToBeRemoved)
+    
+    def update_keyframe_data(self):
+        if(self.preloaded_json_content!=""):
+            pathJson = json.loads(self.preloaded_json_content)
+            keyframes = pathJson.get("keyframes")
+
+            if(self.current_keyframe_index<len(keyframes)):
+                keyframe = keyframes[self.current_keyframe_index]
+                pointList = keyframe.get("points")
+                if(self.current_point_index<len(pointList)):
+                    points = keyframe.get("points")[self.current_point_index]
+
+                    self.index_input_box.clear_widgets()
+
+                    pointType = points.get("pointType")
+                    self.dropdownbutton.text = pointType
+
+                    if(pointType=='triPointAngle'):
+                        self.index_input_box.add_widget(Label(text='Start', size_hint=(0.2, None)))
+                        self.start_index = TextInput(text=str(points.get("toTrack")[0]),size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.start_index)
+                        self.index_input_box.add_widget(Label(text='Middle', size_hint=(0.2, None)))
+                        self.middle_index = TextInput(text=str(points.get("toTrack")[1]), size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.middle_index)
+                        self.index_input_box.add_widget(Label(text='End', size_hint=(0.2, None)))
+                        self.end_index = TextInput(text=str(points.get("toTrack")[2]), size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.end_index)
+                    
+                    elif(pointType=='pointPosition'):
+                        self.index_input_box.add_widget(Label(text='Point', size_hint=(0.2, None)))
+                        self.point_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.point_index)
+                    
+                    elif(pointType=='parallelPosition'):
+                        self.index_input_box.add_widget(Label(text='Arm1 point 1', size_hint=(0.2, None)))
+                        self.a1_point1_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.a1_point1_index)
+                        self.index_input_box.add_widget(Label(text='Arm1 point 2', size_hint=(0.2, None)))
+                        self.a1_point2_index = TextInput(text=str(points.get("toTrack")[1]), size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.a1_point2_index)
+
+                        self.index_input_box.add_widget(Label(text='Arm2 point 1', size_hint=(0.2, None)))
+                        self.a2_point1_index = TextInput(text=str(points.get("toTrack")[2]), size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.a2_point1_index)
+                        self.index_input_box.add_widget(Label(text='Arm2 point 2', size_hint=(0.2, None)))
+                        self.a2_point2_index = TextInput(text=str(points.get("toTrack")[3]), size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.a2_point2_index)
+
+                    elif(pointType=='abovePosition'):
+                        self.index_input_box.add_widget(Label(text='Above point', size_hint=(0.2, None)))
+                        self.above_point_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.above_point_index)
+                        self.index_input_box.add_widget(Label(text='Below point', size_hint=(0.2, None)))
+                        self.below_point_index = TextInput(text=str(points.get("toTrack")[1]), size_hint=(0.8, None), multiline=False)
+                        self.index_input_box.add_widget(self.below_point_index)
+                    
+                    self.slider.value = points.get("leniency")
+                    self.move_slider()
+                    self.timeLimit=str(keyframe.get("timeLimit"))

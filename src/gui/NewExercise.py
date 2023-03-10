@@ -162,7 +162,75 @@ class NewExercise(Screen):
         popup.open()
 
     def edit(self, instance):
-        print("Edit was pressed!")
+        editExercise = self.manager.get_screen('edit exercise')
+        self.manager.current = 'edit exercise'
+
+        #Setting the name of the JSON file to edit
+        filePath = instance.parent.parent.text+'.json'
+        editExercise.exercise_name = instance.parent.parent.text
+        
+        global pathJson
+        with open(filePath, 'r') as f:
+            pathJson = json.load(f)
+        
+        #Storing json string in editExercise
+        #Initialising values
+        json_string = json.dumps(pathJson)
+        editExercise.preloaded_json_content = json_string
+        editExercise.current_keyframe_index = 0
+        editExercise.current_point_index = 0
+        
+        #Parsing JSON files
+        keyframes = pathJson.get("keyframes")
+        editExercise.exercise_video_link=pathJson.get("videoLink")
+        keyframe = keyframes[editExercise.current_keyframe_index]
+        points = keyframe.get("points")[editExercise.current_point_index]
+
+        pointType = points.get("pointType")
+        editExercise.dropdownbutton.text = pointType
+
+        if(pointType=='triPointAngle'):
+            editExercise.index_input_box.add_widget(Label(text='Start', size_hint=(0.2, None)))
+            editExercise.start_index = TextInput(text=str(points.get("toTrack")[0]),size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.start_index)
+            editExercise.index_input_box.add_widget(Label(text='Middle', size_hint=(0.2, None)))
+            editExercise.middle_index = TextInput(text=str(points.get("toTrack")[1]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.middle_index)
+            editExercise.index_input_box.add_widget(Label(text='End', size_hint=(0.2, None)))
+            editExercise.end_index = TextInput(text=str(points.get("toTrack")[2]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.end_index)
+        
+        elif(pointType=='pointPosition'):
+            editExercise.index_input_box.add_widget(Label(text='Point', size_hint=(0.2, None)))
+            editExercise.point_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.point_index)
+        
+        elif(pointType=='parallelPosition'):
+            editExercise.index_input_box.add_widget(Label(text='Arm1 point 1', size_hint=(0.2, None)))
+            editExercise.a1_point1_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.a1_point1_index)
+            editExercise.index_input_box.add_widget(Label(text='Arm1 point 2', size_hint=(0.2, None)))
+            editExercise.a1_point2_index = TextInput(text=str(points.get("toTrack")[1]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.a1_point2_index)
+
+            editExercise.index_input_box.add_widget(Label(text='Arm2 point 1', size_hint=(0.2, None)))
+            editExercise.a2_point1_index = TextInput(text=str(points.get("toTrack")[2]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.a2_point1_index)
+            editExercise.index_input_box.add_widget(Label(text='Arm2 point 2', size_hint=(0.2, None)))
+            editExercise.a2_point2_index = TextInput(text=str(points.get("toTrack")[3]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.a2_point2_index)
+
+        elif(pointType=='abovePosition'):
+            editExercise.index_input_box.add_widget(Label(text='Above point', size_hint=(0.2, None)))
+            editExercise.above_point_index = TextInput(text=str(points.get("toTrack")[0]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.above_point_index)
+            editExercise.index_input_box.add_widget(Label(text='Below point', size_hint=(0.2, None)))
+            editExercise.below_point_index = TextInput(text=str(points.get("toTrack")[1]), size_hint=(0.8, None), multiline=False)
+            editExercise.index_input_box.add_widget(editExercise.below_point_index)
+        
+        editExercise.slider.value = points.get("leniency")
+        editExercise.move_slider()
+        editExercise.timeLimit=str(keyframe.get("timeLimit"))
     
     def delete(self, instance):
         #Instance refers to the Button, while its parent is the BoxLayout within which the Button is contained

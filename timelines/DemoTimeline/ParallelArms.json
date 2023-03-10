@@ -6,7 +6,7 @@
         {
             "points": [
                 {
-                    "pointType": "parallelLines",
+                    "pointType": "parallelPosition",
                     "toTrack": [
                         16,
                         14,
