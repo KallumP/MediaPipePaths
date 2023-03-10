@@ -1,0 +1,22 @@
+{
+    "fileType": "body",
+    "videoLink": "fgyhuijok",
+    "repeat": "1",
+    "keyframes": [
+        {
+            "points": [
+                {
+                    "pointType": "triPointAngle",
+                    "toTrack": [
+                        15,
+                        13,
+                        11
+                    ],
+                    "angle": 84.43914391961445,
+                    "leniency": 11.821480148746025
+                }
+            ],
+            "timeLimit": -1
+        }
+    ]
+}

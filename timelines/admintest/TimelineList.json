@@ -1,0 +1,20 @@
+{
+    "fileType": "timeline",
+    "timeline": [
+        {
+            "exercise": "e1.json"
+        },
+        {
+            "exercise": "e2.json"
+        },
+        {
+            "exercise": "e3.json"
+        },
+        {
+            "exercise": "4.json"
+        },
+        {
+            "exercise": "dsad.json"
+        }
+    ]
+}
