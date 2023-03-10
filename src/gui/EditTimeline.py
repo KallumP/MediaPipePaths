@@ -131,7 +131,7 @@ class EditTimeline(Screen):
                         "timeline":[]}
 
             for exercise in updatedList:
-                content["timeline"].append({"exercise":exercise + ".json"})
+                content["timeline"].append({"exercise":exercise})
 
             # Sets file's current position at offset.
             file.seek(0)
@@ -142,7 +142,7 @@ class EditTimeline(Screen):
         ref.set(content)
         for exercise in updatedList:
             exercise_name_list.append(exercise)
-            with open(exercise + ".json", 'r') as f:
+            with open(exercise+".json", 'r') as f:
                 pathJson = json.load(f)
                 exercise_json.append(pathJson)
         for i in range(len(exercise_name_list)):

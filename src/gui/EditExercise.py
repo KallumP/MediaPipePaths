@@ -244,51 +244,53 @@ class EditExercise(Screen):
 
         target_index = {"toTrack": final_index}     
         
-        #try:
-        if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
-            #Targeted index in frame
-            #Pointtpe is triPointAngle
-            if self.dropdownbutton.text == 'triPointAngle':
-                target = src.helper.GoalAngle(target_index,key_frame_index_result.landmark)
-                point["pointType"] = self.dropdownbutton.text
-                point["toTrack"] = final_index
-                point["angle"] = target
-                point["leniency"] = target*round(self.slider.value, 2)
-                self.frame_points.append(point)
-            #Pointtpe is triPointAngle
-            elif self.dropdownbutton.text == 'pointPosition':
-                target = src.helper.GoalTarget(target_index,key_frame_index_result.landmark)
-                point["pointType"] = self.dropdownbutton.text
-                point["toTrack"] = final_index
-                point["target"] = target
-                point["leniency"] = round(self.slider.value, 2)
-                self.frame_points.append(point)
-            #Pointtpe is parallelPosition
-            elif self.dropdownbutton.text == 'parallelPosition':
-                point["pointType"] = self.dropdownbutton.text
-                point["toTrack"] = final_index
-                point["leniency"] = round(self.slider.value, 2)
-                self.frame_points.append(point)
-            #Pointtpe is abovePosition
-            elif self.dropdownbutton.text == 'abovePosition':
-                point["pointType"] = self.dropdownbutton.text
-                point["toTrack"] = final_index
-                point["leniency"] = round(self.slider.value, 2)
-                self.frame_points.append(point)
-            #Reset right side
-            self.index_input_box.clear_widgets()
-            self.dropdownbutton.text='Choose a point type'
-            self.slider.value = 0
-            self.leniency_value.text = '0.0'
-            self.update_keyframe_data()
-        #Targeted index out of frame
-        else:
+        try:
+            if src.helper.CheckWithinFrame(target_index,key_frame_index_result.landmark):
+                #Targeted index in frame
+                #Pointtpe is triPointAngle
+                if self.dropdownbutton.text == 'triPointAngle':
+                    target = src.helper.GoalAngle(target_index,key_frame_index_result.landmark)
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["angle"] = target
+                    point["leniency"] = target*round(self.slider.value, 2)
+                    self.frame_points.append(point)
+                #Pointtpe is triPointAngle
+                elif self.dropdownbutton.text == 'pointPosition':
+                    target = src.helper.GoalTarget(target_index,key_frame_index_result.landmark)
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["target"] = target
+                    point["leniency"] = round(self.slider.value, 2)
+                    self.frame_points.append(point)
+                #Pointtpe is parallelPosition
+                elif self.dropdownbutton.text == 'parallelPosition':
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["leniency"] = round(self.slider.value, 2)
+                    self.frame_points.append(point)
+                #Pointtpe is abovePosition
+                elif self.dropdownbutton.text == 'abovePosition':
+                    point["pointType"] = self.dropdownbutton.text
+                    point["toTrack"] = final_index
+                    point["leniency"] = round(self.slider.value, 2)
+                    self.frame_points.append(point)
+                #Reset right side
+                self.point_counter+=1
+                self.frame_index_label.text='Current frame:' + str(self.frame_index) + " Current point:" + str(self.point_counter)
+                self.index_input_box.clear_widgets()
+                self.dropdownbutton.text='Choose a point type'
+                self.slider.value = 0
+                self.leniency_value.text = '0.0'
+                self.update_keyframe_data()
+            #Targeted index out of frame
+            else:
+                self.call_pops()
+                self.pop_content.text = 'Targeted index out of frame'
+            # No recording 
+        except:
             self.call_pops()
-            self.pop_content.text = 'Targeted index out of frame'
-        # No recording 
-        """except:
-            self.call_pops()
-            self.pop_content.text = 'No exercise recorded'"""
+            self.pop_content.text = 'No exercise recorded'
             
 
     def reset(self, instance):
@@ -297,7 +299,7 @@ class EditExercise(Screen):
     def next(self, instance):
         if self.frame_points:
             self.frame_index+=1
-            self.point_counter=0
+            self.point_counter=1
             self.frame_index_label.text='Current frame:' + str(self.frame_index) + " Current point:" + str(self.point_counter)
             src.gui.EditExercise.key_frame_index_result = []
             #frame_list.clear()
@@ -320,7 +322,7 @@ class EditExercise(Screen):
         #print(src.gui.EditTimeline.exercise_json)
         with open("TimelineList.json", 'r') as file:
             timeline_data = json.load(file)
-            new_exercise = {"exercise": self.name_label.text+".json"}
+            new_exercise = {"exercise": self.name_label.text}
             timeline_data["timeline"].append(new_exercise)
             file.close()
         with open("TimelineList.json", 'w') as file:
@@ -336,7 +338,7 @@ class EditExercise(Screen):
         add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
         
         for exercise in timeline:              
-            item=Item(text=exercise.get("exercise").replace('.json',''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
+            item=Item(text=exercise.get("exercise"), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
             item.ids.editButton.bind(on_press=self.edit)
             item.ids.testButton.bind(on_press=self.test)
             item.ids.deleteButton.bind(on_press=self.delete)
@@ -347,7 +349,8 @@ class EditExercise(Screen):
         frame_list.clear()
         self.img1.texture = None
         self.frame_index = 1
-        self.frame_index_label.text='Current frame:' + str(self.frame_index)
+        self.point_counter = 1
+        self.frame_index_label.text='Current frame:' + str(self.frame_index) + " Current point:" + str(self.point_counter)
 
         self.manager.current = 'edit timeline'
         self.preloaded_json_content = ""
@@ -366,7 +369,7 @@ class EditExercise(Screen):
         add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
         
         for exercise in timeline:              
-            item=Item(text=exercise.get("exercise").replace('.json', ''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
+            item=Item(text=exercise.get("exercise").replace(".json",""), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
             item.ids.editButton.bind(on_press=self.edit)
             item.ids.deleteButton.bind(on_press=self.delete)
             add_widget(item)

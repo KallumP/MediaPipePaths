@@ -136,7 +136,7 @@ class SelectTimeline(Screen):
         editTimeline.title_text.text += timelineName
         
         for exercise in self.timeline:
-            item=Item(text=exercise.get("exercise").replace('.json',''), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
+            item=Item(text=exercise.get("exercise").replace(".json",""), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
             item.ids.editButton.bind(on_press=self.edit)
             item.ids.testButton.bind(on_press=self.test)
             item.ids.deleteButton.bind(on_press=self.delete)

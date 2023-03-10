@@ -1,7 +1,7 @@
 {
     "fileType": "body",
-    "videoLink": "link",
-    "repeat": "1",
+    "videoLink": "pushlink",
+    "repeat": "100",
     "keyframes": [
         {
             "points": [
@@ -12,23 +12,18 @@
                         13,
                         11
                     ],
-                    "angle": 78.41859917985813,
-                    "leniency": 3.920929958992907
-                }
-            ],
-            "timeLimit": -1
-        },
-        {
-            "points": [
+                    "angle": 127.5366422054385,
+                    "leniency": 5.10146568821754
+                },
                 {
                     "pointType": "triPointAngle",
                     "toTrack": [
-                        12,
+                        16,
                         14,
-                        16
+                        12
                     ],
-                    "angle": 81.92463892702835,
-                    "leniency": 6.553971114162269
+                    "angle": 127.90009124621845,
+                    "leniency": 10.232007299697477
                 }
             ],
             "timeLimit": -1
