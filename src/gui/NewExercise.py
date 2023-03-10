@@ -171,7 +171,7 @@ class NewExercise(Screen):
         
         global pathJson
         with open(filePath, 'r') as f:
-            pathJson = json.load(f)#
+            pathJson = json.load(f)
         
         #Storing json string in editExercise
         #Initialising values
