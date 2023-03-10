@@ -112,7 +112,7 @@ class EditExercise(Screen):
         bottom_area.add_widget(right_side)
 
         typeList = ['triPointAngle' , 'pointPosition', 'parallelLines', 'abovePosition']
-        self.dropdownbutton = Button(text='Choose a point type', font_size='15sp', size_hint=(1, 0.2))
+        self.dropdownbutton = Button(text='Choose a point type', font_size='15sp', size_hint=(1, 0.3))
         right_side.add_widget(self.dropdownbutton)
         self.dropdown = DropDown()
         self.dropdownbutton.bind(on_release=self.dropdown.open)
@@ -141,16 +141,16 @@ class EditExercise(Screen):
         self.index_input_box = GridLayout(cols=2, size_hint_y=None)
         self.index_input_box.bind(minimum_height=self.index_input_box.setter("height"))
 
-        self.scrollview = ScrollView(size_hint=(1, 2),pos_hint={'center_y': 0.5, 'center_x': 0.5})
+        self.scrollview = ScrollView(size_hint=(1, 1),pos_hint={'center_y': 0.5, 'center_x': 0.5})
         self.scrollview.add_widget(self.index_input_box)
         right_side.add_widget(self.scrollview)
 
-        leniency = GridLayout(cols=1, size_hint=(0.5, 0.5))
+        leniency = GridLayout(cols=1, size_hint=(0.5, 0.9))
         right_side.add_widget(leniency)
-        leniency.add_widget(Label(text='Leniency', font_size='15sp', size_hint=(0.5, 0.5)))
-        self.leniency_value = Label(text='0.0', font_size='15sp', size_hint=(0.5, 0.5))
+        leniency.add_widget(Label(text='Leniency', font_size='15sp', size_hint=(0.5, 0.3)))
+        self.leniency_value = Label(text='0.0', font_size='15sp', size_hint=(0.5, 0.3))
         leniency.add_widget(self.leniency_value)
-        self.slider = Slider(min=0, max=1, value=0, size_hint=(0.5, 0.5))
+        self.slider = Slider(min=0, max=1, value=0, size_hint=(0.5, 0.7))
         self.slider.bind(on_touch_move=self.move_slider)
         leniency.add_widget(self.slider)
 
@@ -159,7 +159,7 @@ class EditExercise(Screen):
         next_point_btn.bind(on_press=self.next_point)
         right_side.add_widget(next_point_btn)
 
-        btn_box = BoxLayout(orientation='horizontal', size_hint=(1, 0.5))
+        btn_box = BoxLayout(orientation='horizontal', size_hint=(1, 0.4))
         right_side.add_widget(btn_box)
         reset_btn = Button(text="Reset exercise",
                            size_hint=(1, 0.7))
@@ -177,47 +177,47 @@ class EditExercise(Screen):
     def update_right_side(self, instance):
         self.index_input_box.clear_widgets()
         if instance.text == 'triPointAngle':
-            self.index_input_box.add_widget(Label(text='Start', size_hint=(0.2, None)))
-            self.start_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='Start', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.start_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.start_index)
-            self.index_input_box.add_widget(Label(text='Middle', size_hint=(0.2, None)))
-            self.middle_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='Middle', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.middle_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.middle_index)
-            self.index_input_box.add_widget(Label(text='End', size_hint=(0.2, None)))
-            self.end_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='End', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.end_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.end_index)
         elif instance.text == 'pointPosition':
-            self.index_input_box.add_widget(Label(text='Point', size_hint=(0.2, None)))
-            self.point_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='Point', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.point_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.point_index)
         elif instance.text == 'parallelLines':
-            self.index_input_box.add_widget(Label(text='Arm1 point 1', size_hint=(0.2, None)))
-            self.a1_point1_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='Arm1 point 1', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.a1_point1_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.a1_point1_index)
-            self.index_input_box.add_widget(Label(text='Arm1 point 2', size_hint=(0.2, None)))
-            self.a1_point2_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='Arm1 point 2', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.a1_point2_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.a1_point2_index)
             
-            self.index_input_box.add_widget(Label(text='Arm2 point 1', size_hint=(0.2, None)))
-            self.a2_point1_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='Arm2 point 1', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.a2_point1_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.a2_point1_index)
-            self.index_input_box.add_widget(Label(text='Arm2 point 2', size_hint=(0.2, None)))
-            self.a2_point2_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='Arm2 point 2', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.a2_point2_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.a2_point2_index)
         elif instance.text == 'abovePosition':
-            self.index_input_box.add_widget(Label(text='Above point', size_hint=(0.2, None)))
-            self.above_point_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='Above point', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.above_point_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.above_point_index)
-            self.index_input_box.add_widget(Label(text='Below point', size_hint=(0.2, None)))
-            self.below_point_index = TextInput(text='', size_hint=(0.8, None), write_tab=False, multiline=False)
+            self.index_input_box.add_widget(Label(text='Below point', size_hint=(0.5, None), height=40, font_size='25sp'))
+            self.below_point_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.below_point_index)
 
     def edit_relationship(self, instance):
         self.dropdownbutton.text = instance.text
 
     def setter(self, window, width, height):
-        self.root.width = width
-        self.root.height = height
+        self.scrollview.width = 0#width
+        self.scrollview.height = 0#height
 
     def record_frame(self, instance):
         self.manager.get_screen('record frame').start_update()
@@ -236,7 +236,9 @@ class EditExercise(Screen):
                 if valid_input == False:
                     break
                 final_index.append(int(widget.text))
-        target_index = {"toTrack": final_index}     
+        target_index = {"toTrack": final_index}  
+        if len(final_index)==0:
+            valid_input = False
 
         if valid_input == True:
             try:
@@ -291,14 +293,17 @@ class EditExercise(Screen):
         #return 1
     
     def next(self, instance):
-        self.frame_index+=1
-        self.point_counter=0
-        self.frame_index_label.text='Current frame:' + str(self.frame_index) + " Current point:" + str(self.point_counter)
-        src.gui.EditExercise.key_frame_index_result = []
-        #frame_list.clear()
-        self.img1.texture = None
-        self.time_limit_pops()
-        #return 1      
+        if self.frame_points:
+            self.frame_index+=1
+            self.point_counter=0
+            self.frame_index_label.text='Current frame:' + str(self.frame_index) + " Current point:" + str(self.point_counter)
+            src.gui.EditExercise.key_frame_index_result = []
+            #frame_list.clear()
+            self.img1.texture = None
+            self.time_limit_pops()
+        else: 
+            self.call_pops()
+            self.pop_content.text = "No point selected"
 
     def complete(self, instance):
         exercise_json_content["keyframes"] = frame_list
@@ -368,7 +373,7 @@ class EditExercise(Screen):
 
     def check_index_input(self, input):
         index_list = ["11","12","13","14","15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"]
-        if input not in index_list:        
+        if input not in index_list or input == None:        
             self.call_pops()
             self.pop_content.text = "Invalid index: " + input
             return False

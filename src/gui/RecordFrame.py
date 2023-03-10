@@ -17,6 +17,7 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 
 import src.gui.EditExercise
+from kivy.core.window import Window
 
 class ScreenManagement(ScreenManager):
     def __init__(self, **kwargs):
@@ -45,16 +46,16 @@ class RecordFrame(Screen):
 
         self.layout.add_widget(image_area)
 
-        btn_area = BoxLayout(orientation = 'vertical', size_hint=(1, 0.2))
-        self.record_btn = Button(text="Record",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5}, disabled = False)
+        btn_area = BoxLayout(orientation = 'horizontal', size_hint=(1, None), height=80)
+        self.record_btn = Button(text="Record",size_hint=(0.3, 1), pos_hint={'center_x': 0.5}, font_size='25sp', disabled = False)
         self.record_btn.bind(on_press=self.record)
         btn_area.add_widget(self.record_btn)
 
-        self.cancel_btn = Button(text="Cancel",size_hint=(0.3, 0.01), pos_hint={'center_x': 0.5}, disabled = False)
+        self.cancel_btn = Button(text="Cancel",size_hint=(0.3, 1), pos_hint={'center_x': 0.5}, font_size='25sp', disabled = False)
         self.cancel_btn.bind(on_press=self.cancel)
         btn_area.add_widget(self.cancel_btn)
         
-        self.confirm_btn = Button(text="Confirm", size_hint=(0.3,0.01), pos_hint={'center_x': 0.5}, disabled = False)
+        self.confirm_btn = Button(text="Confirm", size_hint=(0.3,1), pos_hint={'center_x': 0.5}, font_size='25sp', disabled = False)
         self.confirm_btn.bind(on_press=self.confirm)
         btn_area.add_widget(self.confirm_btn)
 
@@ -165,7 +166,7 @@ class RecordFrame(Screen):
     def update(self, dt):
         # display image from cam in opencv window
         ret, frame = self.capture.read()
-        #frame = cv2.resize(frame, (1280, 720))
+        frame = cv2.resize(frame, (Window.width, Window.height))
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image.flags.writeable = False
         self.results = self.pose_model.process(image)
