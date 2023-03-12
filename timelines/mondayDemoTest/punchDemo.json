@@ -1,0 +1,52 @@
+{
+    "fileType": "body",
+    "videoLink": "demoLink",
+    "repeat": "2",
+    "keyframes": [
+        {
+            "points": [
+                {
+                    "pointType": "triPointAngle",
+                    "toTrack": [
+                        12,
+                        14,
+                        16
+                    ],
+                    "angle": 43.601007612590784,
+                    "leniency": 4.360100761259079
+                }
+            ],
+            "timeLimit": -1
+        },
+        {
+            "points": [
+                {
+                    "pointType": "triPointAngle",
+                    "toTrack": [
+                        12,
+                        14,
+                        16
+                    ],
+                    "angle": 169.75049530776047,
+                    "leniency": 16.975049530776047
+                }
+            ],
+            "timeLimit": -1
+        },
+        {
+            "points": [
+                {
+                    "pointType": "triPointAngle",
+                    "toTrack": [
+                        12,
+                        14,
+                        16
+                    ],
+                    "angle": 38.75640179003963,
+                    "leniency": 3.8756401790039634
+                }
+            ],
+            "timeLimit": -1
+        }
+    ]
+}
