@@ -154,10 +154,10 @@ class EditExercise(Screen):
         self.leniency_value = Label(text='0.0', font_size='15sp', size_hint=(0.5, 0.3))
         leniency.add_widget(self.leniency_value)
         self.slider = Slider(min=0, max=1, value=0, size_hint=(0.5, 0.7), disabled = True)
-        self.slider.bind(on_touch_move=self.move_slider)
+        self.slider.bind(value = self.move_slider)
         leniency.add_widget(self.slider)
 
-        next_point_btn = Button(text="Next point",
+        next_point_btn = Button(text="Save point",
                         size_hint=(.5, .3))
         next_point_btn.bind(on_press=self.next_point)
         right_side.add_widget(next_point_btn)
@@ -168,7 +168,7 @@ class EditExercise(Screen):
                            size_hint=(1, 0.7))
         reset_btn.bind(on_press=self.reset)
         btn_box.add_widget(reset_btn)
-        self.next_btn = Button(text="Next frame",
+        self.next_btn = Button(text="Save frame",
                           size_hint=(1, 0.7))
         self.next_btn.bind(on_press=self.next)
         btn_box.add_widget(self.next_btn)
