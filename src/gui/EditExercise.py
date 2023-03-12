@@ -153,7 +153,7 @@ class EditExercise(Screen):
         leniency.add_widget(Label(text='Leniency', font_size='15sp', size_hint=(0.5, 0.3)))
         self.leniency_value = Label(text='0.0', font_size='15sp', size_hint=(0.5, 0.3))
         leniency.add_widget(self.leniency_value)
-        self.slider = Slider(min=0, max=1, value=0, size_hint=(0.5, 0.7))
+        self.slider = Slider(min=0, max=1, value=0, size_hint=(0.5, 0.7), disabled = True)
         self.slider.bind(on_touch_move=self.move_slider)
         leniency.add_widget(self.slider)
 
@@ -179,6 +179,9 @@ class EditExercise(Screen):
     
     def update_right_side(self, instance):
         self.index_input_box.clear_widgets()
+        self.slider.disabled = False
+        self.slider.value = 0
+        self.leniency_value.text = '0.0'
         if instance.text == 'triPointAngle':
             self.index_input_box.add_widget(Label(text='Start', size_hint=(0.5, None), height=40, font_size='25sp'))
             self.start_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
@@ -193,6 +196,7 @@ class EditExercise(Screen):
             self.index_input_box.add_widget(Label(text='Point', size_hint=(0.5, None), height=40, font_size='25sp'))
             self.point_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
             self.index_input_box.add_widget(self.point_index)
+            self.slider.disabled = True
         elif instance.text == 'parallelLines':
             self.index_input_box.add_widget(Label(text='Arm1 point 1', size_hint=(0.5, None), height=40, font_size='25sp'))
             self.a1_point1_index = TextInput(text='', size_hint=(0.5, None), write_tab=False, multiline=False, height=40, font_size='25sp')
@@ -234,7 +238,7 @@ class EditExercise(Screen):
             self.current_point_index+=1
         point = {}
         final_index = []
-        #valid_input = True
+        valid_input = False
         for widget in self.index_input_box.children:
             if(str(type(widget))=="<class 'kivy.uix.textinput.TextInput'>"):
                 valid_input = self.check_index_input(widget.text)
@@ -261,7 +265,7 @@ class EditExercise(Screen):
                     point["pointType"] = self.dropdownbutton.text
                     point["toTrack"] = final_index
                     point["target"] = target
-                    point["leniency"] = round(self.slider.value, 2)
+                    point["leniency"] = 100
                     self.frame_points.append(point)
                 #Pointtpe is parallelPosition
                 elif self.dropdownbutton.text == 'parallelPosition':
@@ -289,8 +293,9 @@ class EditExercise(Screen):
                 self.pop_content.text = 'Targeted index out of frame'
             # No recording 
         except:
-            self.call_pops()
-            self.pop_content.text = 'No exercise recorded'
+            if valid_input != False:
+                self.call_pops()
+                self.pop_content.text = 'No exercise recorded'
             
 
     def reset(self, instance):
@@ -310,52 +315,56 @@ class EditExercise(Screen):
             self.pop_content.text = "No point selected"
 
     def complete(self, instance):
-        exercise_json_content["keyframes"] = frame_list
-        #src.gui.EditTimeline.exercise_name_list.append(self.name_label.text)
-        
-        #Create exercise json
-        with open(self.exercise_name+".json",'w') as file:
-            file.seek(0)
-            json.dump(exercise_json_content, file, indent = 4)
-            file.close()
-        #src.gui.EditTimeline.exercise_json.append(exercise_json_content)
-        #print(src.gui.EditTimeline.exercise_json)
-        with open("TimelineList.json", 'r') as file:
-            timeline_data = json.load(file)
-            new_exercise = {"exercise": self.name_label.text}
-            timeline_data["timeline"].append(new_exercise)
-            file.close()
-        with open("TimelineList.json", 'w') as file:
-            file.seek(0)
-            json.dump(timeline_data, file, indent = 4)
-            file.close()
+        if frame_list:
+            exercise_json_content["keyframes"] = frame_list
+            #src.gui.EditTimeline.exercise_name_list.append(self.name_label.text)
+            
+            #Create exercise json
+            with open(self.exercise_name+".json",'w') as file:
+                file.seek(0)
+                json.dump(exercise_json_content, file, indent = 4)
+                file.close()
+            #src.gui.EditTimeline.exercise_json.append(exercise_json_content)
+            #print(src.gui.EditTimeline.exercise_json)
+            with open("TimelineList.json", 'r') as file:
+                timeline_data = json.load(file)
+                new_exercise = {"exercise": self.name_label.text}
+                timeline_data["timeline"].append(new_exercise)
+                file.close()
+            with open("TimelineList.json", 'w') as file:
+                file.seek(0)
+                json.dump(timeline_data, file, indent = 4)
+                file.close()
 
-        timeline = timeline_data.get("timeline")
+            timeline = timeline_data.get("timeline")
 
-        Item = Factory.MyDraggableItem
-        Item()
-        editTimeline = self.manager.get_screen('edit timeline')
-        add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
-        
-        for exercise in timeline:              
-            item=Item(text=exercise.get("exercise"), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
-            item.ids.editButton.bind(on_press=self.edit)
-            item.ids.testButton.bind(on_press=self.test)
-            item.ids.deleteButton.bind(on_press=self.delete)
-            add_widget(item)
+            Item = Factory.MyDraggableItem
+            Item()
+            editTimeline = self.manager.get_screen('edit timeline')
+            add_widget = editTimeline.exerciseLayout.ids.ReorderableLayout.add_widget
+            
+            for exercise in timeline:              
+                item=Item(text=exercise.get("exercise"), size_hint=(0.2,0.4), pos_hint={'center_y': 0.5, 'center_x': 0.5})
+                item.ids.editButton.bind(on_press=self.edit)
+                item.ids.testButton.bind(on_press=self.test)
+                item.ids.deleteButton.bind(on_press=self.delete)
+                add_widget(item)
 
-        src.gui.EditExercise.key_frame_index_result = []
-        #exercise_json_content=None
-        frame_list.clear()
-        self.img1.texture = None
-        self.frame_index = 1
-        self.point_counter = 1
-        self.frame_index_label.text='Current frame:' + str(self.frame_index) + " Current point:" + str(self.point_counter)
+            src.gui.EditExercise.key_frame_index_result = []
+            #exercise_json_content=None
+            frame_list.clear()
+            self.img1.texture = None
+            self.frame_index = 1
+            self.point_counter = 1
+            self.frame_index_label.text='Current frame:' + str(self.frame_index) + " Current point:" + str(self.point_counter)
 
-        self.manager.current = 'edit timeline'
-        self.preloaded_json_content = ""
-        self.current_keyframe_index = 0
-        self.current_point_index = 0
+            self.manager.current = 'edit timeline'
+            self.preloaded_json_content = ""
+            self.current_keyframe_index = 0
+            self.current_point_index = 0
+        else:
+            self.call_pops()
+            self.pop_content.text = "No frame recorded"
 
     def cancel(self, instance):
         with open("TimelineList.json", 'r') as f:

@@ -1,0 +1,23 @@
+{
+    "fileType": "body",
+    "videoLink": "mlamd",
+    "repeat": "1",
+    "keyframes": [
+        {
+            "points": [
+                {
+                    "pointType": "pointPosition",
+                    "toTrack": [
+                        12
+                    ],
+                    "target": [
+                        0.17833611369132996,
+                        0.8307295441627502
+                    ],
+                    "leniency": 100
+                }
+            ],
+            "timeLimit": -1
+        }
+    ]
+}

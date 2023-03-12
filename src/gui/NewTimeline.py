@@ -61,32 +61,35 @@ class NewTimeline(Screen):
         self.add_widget(layout)
 
     def create_timeline(self, instance):
-        new_timeline = self.timeline_name.text
-        path = os.path.join(os.getcwd(), new_timeline)
+        if self.timeline_name.text and self.timeline_name.text.isalnum():
+            new_timeline = self.timeline_name.text
+            path = os.path.join(os.getcwd(), new_timeline)
 
-        if not os.path.exists(path):
-            os.mkdir(path)
-            os.chdir(path)
+            if not os.path.exists(path):
+                os.mkdir(path)
+                os.chdir(path)
 
-            editTimeline = self.manager.get_screen('edit timeline')
-            editTimeline.title_text.text += self.timeline_name.text 
+                editTimeline = self.manager.get_screen('edit timeline')
+                editTimeline.title_text.text += self.timeline_name.text 
 
-            with open("TimelineList.json",'w') as file:
-            # First we load existing data into a dict.
-                content = { "fileType":"timeline",
-                            "timeline":[]}
-        
-                # Sets file's current position at offset.
-                file.seek(0)
-                # convert back to json.
-                json.dump(content, file, indent = 4)  
+                with open("TimelineList.json",'w') as file:
+                # First we load existing data into a dict.
+                    content = { "fileType":"timeline",
+                                "timeline":[]}
+            
+                    # Sets file's current position at offset.
+                    file.seek(0)
+                    # convert back to json.
+                    json.dump(content, file, indent = 4)  
 
-            src.gui.EditTimeline.timeline_name = self.timeline_name.text
+                src.gui.EditTimeline.timeline_name = self.timeline_name.text
 
-            self.timeline_name.text = ''                   
-            self.manager.current = 'edit timeline'                      
+                self.timeline_name.text = ''                   
+                self.manager.current = 'edit timeline'                      
+            else:
+                self.warning_message.text = "A timeline with same name is already created"
         else:
-            self.warning_message.text = "A timeline with same name is already created"
+            self.warning_message.text = "Illigal timeline name"
  
     def cancel_create(self, instance):
         self.timeline_name.text = ''

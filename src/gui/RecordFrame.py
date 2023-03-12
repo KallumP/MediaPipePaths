@@ -95,6 +95,7 @@ class RecordFrame(Screen):
         src.gui.EditExercise.key_frame_index_result = self.results.pose_landmarks
 
         ret, capture_frame = self.capture.read()
+        capture_frame = cv2.resize(capture_frame, (Window.width, Window.height))
         # Convert the image to a texture and display it in the Image widget
         image = cv2.cvtColor(capture_frame, cv2.COLOR_BGR2RGB)
         image = cv2.flip(image, 1)

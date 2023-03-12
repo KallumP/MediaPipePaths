@@ -81,7 +81,7 @@ class NewExercise(Screen):
 
     def create_exercise(self, instance):
         #not self.repeat_times.text.replace(".", "").isnumeric()
-        if self.repeat_times.text.isnumeric() and self.exercise_name.text != "" and self.exercise_video_link.text != "":
+        if self.repeat_times.text.isalnum() and self.exercise_name.text != "" and self.exercise_video_link.text != "":
             #self.modify_timeline()
             self.create_exercise_json()
             self.manager.get_screen('edit exercise').exercise_name = str(self.exercise_name.text)
