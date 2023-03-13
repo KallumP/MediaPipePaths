@@ -1,0 +1,22 @@
+{
+    "fileType": "body",
+    "videoLink": "https://www.youtube.com/watch?v=JVAoIssakxs",
+    "repeat": "1",
+    "keyframes": [
+        {
+            "points": [
+                {
+                    "pointType": "triPointAngle",
+                    "toTrack": [
+                        15,
+                        13,
+                        11
+                    ],
+                    "angle": 70.3555373734142,
+                    "leniency": 14.77466284841698
+                }
+            ],
+            "timeLimit": -1
+        }
+    ]
+}

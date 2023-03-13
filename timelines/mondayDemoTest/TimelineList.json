@@ -3,6 +3,12 @@
     "timeline": [
         {
             "exercise": "punchDemo"
+        },
+        {
+            "exercise": "LinkTest"
+        },
+        {
+            "exercise": "LinkTest2"
         }
     ]
 }
