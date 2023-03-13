@@ -120,7 +120,7 @@ class NewExercise(Screen):
         repeat_value = self.repeat_times.text                   
 
         content = { "fileType":"body",
-                    "videoLink":self.exercise_video_link.text,
+                    "videoLink":"\""+self.exercise_video_link.text+"\"",
                     "repeat": repeat_value,
                     "keyframes":[]}
         

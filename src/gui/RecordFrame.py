@@ -130,7 +130,7 @@ class RecordFrame(Screen):
         
         # Flip the image horizontally
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        image = cv2.flip(image, 1)
+        #image = cv2.flip(image, 1)
         buf1 = cv2.flip(image, 0)
         buf = buf1.tostring()
         self.texture1 = Texture.create(size=(capture_frame.shape[1], capture_frame.shape[0]), colorfmt='bgr')  

@@ -1,0 +1,23 @@
+{
+    "fileType": "body",
+    "videoLink": "\"https://www.youtube.com/watch?v=U5vV_VK4oLc\"",
+    "repeat": "1",
+    "keyframes": [
+        {
+            "points": [
+                {
+                    "pointType": "pointPosition",
+                    "toTrack": [
+                        11
+                    ],
+                    "target": [
+                        0.7457417249679565,
+                        0.758568525314331
+                    ],
+                    "leniency": 100
+                }
+            ],
+            "timeLimit": -1
+        }
+    ]
+}
